@@ -1,34 +1,40 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/global/sidebar/appSidebar";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { Provider } from "@/components/ui/provider";
 import { Toaster } from "@/components/ui/toaster";
 import { ReactNode } from "react";
+import Head from "next/head"; 
+import dynamic from "next/dynamic";
 
-// Define the Layout props type for TypeScript compatibility
 interface LayoutProps {
   children: ReactNode;
 }
 
+const LazyAppSidebar = dynamic(() => import("@/components/global/sidebar/appSidebar"));
+
 export default async function Layout({ children }: LayoutProps) {
-  // Check for authentication using Kinde
   const { isAuthenticated } = getKindeServerSession();
 
-  // Redirect if the user is not authenticated
-  if (!(await isAuthenticated())) {
+  const authenticated = await isAuthenticated();
+  if (!authenticated) {
     redirect("/api/auth/login");
-    return null; // Early return to prevent rendering after redirect
+    return null; 
   }
 
-  // Return the layout JSX structure
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <Provider>
-        <Toaster />
-        <main className="w-full">{children}</main>
-      </Provider>
-    </SidebarProvider>
+    <>
+      <Head>
+        <title>Quirk</title>
+      </Head>
+
+      <SidebarProvider>
+        <LazyAppSidebar />
+        <Provider>
+          <Toaster />
+          <main className="w-full">{children}</main>
+        </Provider>
+      </SidebarProvider>
+    </>
   );
 }

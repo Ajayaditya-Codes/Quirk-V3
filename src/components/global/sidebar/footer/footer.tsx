@@ -6,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
 
-// Define user details type
 interface UserDetails {
   id: string;
   picture?: string | null;
@@ -22,12 +21,12 @@ const fetchUserDetails = async (): Promise<UserDetails | null> => {
     if (!id) return null;
 
     const result = await db.select().from(Users).where(eq(Users.KindeID, id)).execute();
-    const userDetails = result && result.length > 0 ? result[0] : null;
+    const userDetails = result?.[0] ?? null;
 
     return {
       id,
       picture,
-      given_name,
+      given_name: given_name ?? "Guest", 
       credits: userDetails?.Credits ?? 0,
     };
   } catch (error) {
@@ -55,7 +54,7 @@ export default async function Footer() {
     );
   }
 
-  const { picture, given_name = "Guest", credits = 0 } = userDetails;
+  const { picture, given_name, credits } = userDetails;
 
   return (
     <SidebarFooter className="m-3 shadow-lg bg-white dark:bg-neutral-800 rounded-xl p-3 flex flex-row justify-start items-start">

@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/AuthProvider";
 
 export const metadata: Metadata = {
-  title: "Quirk-V2",
+  title: "Quirk",
   description: "Automate Your GitHub Workflow",
 };
 

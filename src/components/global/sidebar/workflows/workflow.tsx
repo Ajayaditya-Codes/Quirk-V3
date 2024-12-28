@@ -32,31 +32,42 @@ const get = async () => {
 
 export default async function Workflow() {
   const userDetails = await get();
+
+  if (!userDetails) {
+    return <div>Error loading workflows.</div>; // Fallback message if user details can't be loaded
+  }
+
+  const { Workflows = [] } = userDetails;
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Workflows</SidebarGroupLabel>
+
       <SidebarGroupAction className="p-2">
         <CreateBtn />
       </SidebarGroupAction>
+
       <SidebarGroupContent className="py-2 space-y-1">
-        {userDetails?.Workflows.length == 0 ||
-        userDetails?.Workflows.length == undefined ? (
+        {Workflows.length === 0 ? (
           <div className="text-sm text-center mb-5 flex w-full justify-center">
             No Workflows Found.
           </div>
         ) : (
-          <div className="flex flex-col  mb-5 w-full">
-            {userDetails?.Workflows.map((workflow) => (
-              <WorkflowMenu workflow={workflow} key={workflow}/>
+          <div className="flex flex-col mb-5 w-full">
+            {Workflows.map((workflow) => (
+              <WorkflowMenu workflow={workflow} key={workflow} />
             ))}
           </div>
         )}
+
         <div className="rounded-xl bg-white shadow-lg dark:bg-neutral-800 p-3 flex fle-row justify-start items-start space-x-2">
           <Box />
-          <h5>
-            You are left with <br />
-            {3 - (userDetails?.Workflows.length || 0)} Free Workflows
-          </h5>
+          <div>
+            <p>
+              You are left with <br />
+              {3 - Workflows.length} Free Workflows
+            </p>
+          </div>
         </div>
       </SidebarGroupContent>
     </SidebarGroup>

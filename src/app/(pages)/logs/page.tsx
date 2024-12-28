@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import dynamic from "next/dynamic";
 import { db } from "@/db/drizzle";
 import { Logs, Users } from "@/db/schema";
 import {
@@ -10,24 +11,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IconCircleCheck, IconExclamationCircle } from "@tabler/icons-react";
 import { eq, inArray } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import Header from "@/components/global/header";
 import { Skeleton } from "@/components/ui/skeleton";
-import Head from "next/head";
+import { Log, User } from "@/db/types";
 
-type Log = {
-  createdAt: Date;
-  LogMessage: string;
-  WorkflowName: string;
-  Success: boolean | null;
+export const metadata = {
+  title: "Workflow Logs | My App",
+  description:
+    "View detailed logs for workflow activities, including timestamps, messages, and success indicators.",
+  openGraph: {
+    title: "Workflow Logs | My App",
+    description:
+      "View detailed logs for workflow activities, including timestamps, messages, and success indicators.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Workflow Logs | My App",
+    description:
+      "View detailed logs for workflow activities, including timestamps, messages, and success indicators.",
+  },
 };
 
-type User = {
-  KindeID: string;
-  Workflows: string[];
-};
+export const viewport = "width=device-width, initial-scale=1";
+
+const IconCircleCheck = dynamic(() =>
+  import("@tabler/icons-react").then((mod) => mod.IconCircleCheck)
+);
+const IconExclamationCircle = dynamic(() =>
+  import("@tabler/icons-react").then((mod) => mod.IconExclamationCircle)
+);
 
 const fetchLogs = async (): Promise<Log[] | null> => {
   const { getUser } = getKindeServerSession();
@@ -95,13 +109,19 @@ const TableContent = ({ logs }: { logs: Log[] | null }) => (
               <TableCell>{log.LogMessage}</TableCell>
               <TableCell className="flex justify-end">
                 {log.Success ? (
-                  <div className="flex items-center space-x-2 rounded-xl p-1 px-2">
-                    <IconCircleCheck className="text-green-500" />
+                  <div
+                    className="flex items-center space-x-2 rounded-xl p-1 px-2"
+                    aria-label="Succeeded"
+                  >
+                    <IconCircleCheck className="text-green-500" aria-hidden="true" />
                     <p>Succeeded</p>
                   </div>
                 ) : (
-                  <div className="flex items-center space-x-2 rounded-xl p-1 px-2">
-                    <IconExclamationCircle className="text-red-500" />
+                  <div
+                    className="flex items-center space-x-2 rounded-xl p-1 px-2"
+                    aria-label="Failed"
+                  >
+                    <IconExclamationCircle className="text-red-500" aria-hidden="true" />
                     <p>Failed</p>
                   </div>
                 )}
@@ -122,35 +142,24 @@ export default async function Page() {
   const logs = await fetchLogs();
 
   return (
-    <>
-      <Head>
-        <title>Workflow Logs | My App</title>
-        <meta
-          name="description"
-          content="View detailed logs for workflow activities, including timestamps, messages, and success indicators."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="robots" content="index, follow" />
-      </Head>
-      <Suspense fallback={<TableSkeleton />}>
-        <div className="w-full flex flex-col">
-          <Header route="Logs" />
-          <div className="w-full p-[3vh]">
-            <Table className="text-base">
-              <TableCaption>Workflow Activity Logs</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="xl:w-[20vw]">Timestamp</TableHead>
-                  <TableHead className="xl:w-[15vw]">Workflow</TableHead>
-                  <TableHead>Message</TableHead>
-                  <TableHead className="text-right">Success</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableContent logs={logs} />
-            </Table>
-          </div>
-        </div>
-      </Suspense>
-    </>
+    <div className="w-full flex flex-col">
+      <Header route="Logs" />
+      <main className="w-full p-[3vh]">
+        <Suspense fallback={<TableSkeleton />}>
+          <Table className="text-base">
+            <TableCaption>Workflow Activity Logs</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="xl:w-[20vw]">Timestamp</TableHead>
+                <TableHead className="xl:w-[15vw]">Workflow</TableHead>
+                <TableHead>Message</TableHead>
+                <TableHead className="text-right">Success</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableContent logs={logs} />
+          </Table>
+        </Suspense>
+      </main>
+    </div>
   );
 }

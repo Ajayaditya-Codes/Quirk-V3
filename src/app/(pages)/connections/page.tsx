@@ -16,7 +16,7 @@ export const metadata = {
     url: "https://quirk.com/connections",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Connections | Quirk",
     description: "Manage and connect your accounts including GitHub, Slack, and Asana.",
   },
