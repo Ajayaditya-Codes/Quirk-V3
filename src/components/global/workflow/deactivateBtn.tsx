@@ -1,36 +1,37 @@
 "use client";
-import * as React from "react";
-  import { useRouter } from "next/navigation";
+
+import React from "react";
+import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
-export default function DeactivateBtn({
-  workflowName,
-}: {
-  workflowName: String;
-}) {
+interface DeactivateBtnProps {
+  workflowName: string; // Changed String to string for proper TypeScript usage
+}
+
+const DeactivateBtn: React.FC<DeactivateBtnProps> = ({ workflowName }) => {
   const router = useRouter();
 
   const handler = async () => {
-    const promise = new Promise(async (resolve, reject) => {
+    const promise = new Promise<void>(async (resolve, reject) => {
       try {
         const response = await fetch("/api/workflow/deactivate", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            workflowName,
-          }),
+          body: JSON.stringify({ workflowName }),
         });
 
         if (response.ok) {
-          resolve(workflowName); // Success case
+          resolve(); // Success case
         } else {
           const errorData = await response.json();
           reject(new Error(errorData.error || "Workflow deactivation failed"));
         }
       } catch (error) {
-        reject(error); // Unexpected errors
+        reject(
+          new Error("Network error occurred while deactivating workflow.")
+        );
       }
     });
 
@@ -41,7 +42,7 @@ export default function DeactivateBtn({
       },
       error: (error) => ({
         title: "Deactivation Failed",
-        description: error.message || "An unexpected error occurred while deactivating the workflow.",
+        description: error.message || "An unexpected error occurred.",
       }),
       loading: {
         title: "Deactivating Workflow...",
@@ -49,14 +50,23 @@ export default function DeactivateBtn({
       },
     });
 
-    // Handle additional logic after the toast
     try {
       await promise;
-      router.refresh();
+      router.refresh(); // Refresh the page upon successful deactivation
     } catch (error) {
-      console.log("Error during workflow deactivation:", error);
+      console.error("Error during workflow deactivation:", error);
     }
   };
 
-  return <span onClick={handler}>Deactivate Workflow</span>;
-}
+  return (
+    <button
+      onClick={handler}
+      className="text-sm font-medium"
+      aria-label={`Deactivate ${workflowName}`}
+    >
+      Deactivate Workflow
+    </button>
+  );
+};
+
+export default DeactivateBtn;

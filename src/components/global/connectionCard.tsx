@@ -1,8 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import Link from "next/link";
-import { toaster } from "../ui/toaster"; // Assuming toaster utility is available
+import { toaster } from "../ui/toaster"; 
 import { useRouter } from "next/navigation";
 
 type Props = {
@@ -14,7 +19,6 @@ type Props = {
   disconnectionLink: string;
 };
 
-// Function to handle the disconnection process
 async function disconnectService(disconnectionLink: string): Promise<void> {
   const response = await fetch(disconnectionLink, {
     method: "POST",
@@ -39,7 +43,6 @@ const ConnectionCard = ({
   const handleDisconnect = async () => {
     setLoading(true);
 
-    // Show the toaster loading state
     toaster.create({
       title: "Disconnecting " + title + "...",
       description: "Please wait while we disconnect you.",
@@ -47,27 +50,22 @@ const ConnectionCard = ({
     });
 
     try {
-      // Attempt to disconnect and handle success/failure
       await disconnectService(disconnectionLink);
 
-      // Show success toast
       toaster.create({
         title: "Successfully disconnected " + title + "!",
         description: "You have been disconnected from the service.",
         type: "success",
       });
 
-      // Optionally, refresh the page or state
       router.refresh();
     } catch (error: any) {
-      // Show error toast
       toaster.create({
         title: "Disconnect " + title + " failed",
         description: error?.message || "Something went wrong.",
         type: "error",
       });
     } finally {
-      // Reset loading state
       setLoading(false);
     }
   };
@@ -83,13 +81,12 @@ const ConnectionCard = ({
       </CardHeader>
       <div className="flex flex-row gap-2 space-x-3 p-4 ">
         {connected ? (
-          <button
+          <span
             onClick={handleDisconnect}
             className="rounded-lg p-2 border border-red-600 font-bold"
-            disabled={loading}
           >
             {loading ? "Disconnecting..." : "Disconnect"}
-          </button>
+          </span>
         ) : (
           <Link
             href={connectionLink ? connectionLink : "#"}

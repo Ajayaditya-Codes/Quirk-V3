@@ -1,20 +1,21 @@
 "use client";
-import * as React from "react";
+
+import React from "react";
 import { generate } from "random-words";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
-export default function DuplicateBtn({
-  workflowName,
-}: {
-  workflowName: String;
-}) {
+interface DuplicateBtnProps {
+  workflowName: string; // Replaced `String` with `string` for correct TypeScript usage
+}
+
+const DuplicateBtn: React.FC<DuplicateBtnProps> = ({ workflowName }) => {
   const router = useRouter();
 
   const handler = async () => {
     const newWorkflow = join(generate(3)); // Generate the name for the new workflow
 
-    const promise = new Promise(async (resolve, reject) => {
+    const promise = new Promise<void>(async (resolve, reject) => {
       try {
         const response = await fetch("/api/workflow/duplicate", {
           method: "POST",
@@ -28,13 +29,13 @@ export default function DuplicateBtn({
         });
 
         if (response.ok) {
-          resolve(workflowName); // Success case
+          resolve(); // Success case
         } else {
           const errorData = await response.json();
           reject(new Error(errorData.error || "Workflow duplication failed"));
         }
       } catch (error) {
-        reject(error); // Unexpected errors
+        reject(new Error("Unexpected error occurred during duplication"));
       }
     });
 
@@ -45,7 +46,9 @@ export default function DuplicateBtn({
       },
       error: (error) => ({
         title: "Duplication Failed",
-        description: error.message || "An unexpected error occurred while duplicating the workflow.",
+        description:
+          error.message ||
+          "An unexpected error occurred while duplicating the workflow.",
       }),
       loading: {
         title: "Duplicating Workflow...",
@@ -56,13 +59,13 @@ export default function DuplicateBtn({
     // Post-toast logic
     try {
       await promise;
-      router.refresh();
+      router.refresh(); // Refresh the page after successful duplication
     } catch (error) {
       console.log("Error during workflow duplication:", error);
     }
   };
-    
-  const join = (strings: String[] | String) => {
+
+  const join = (strings: string[] | string) => {
     let result = "";
     for (const string of strings) {
       result += string[0].toUpperCase() + string.slice(1);
@@ -70,5 +73,16 @@ export default function DuplicateBtn({
     }
     return result.slice(0, -1);
   };
-  return <span onClick={handler}>Duplicate Workflow</span>;
-}
+
+  return (
+    <button
+      onClick={handler}
+      className="text-sm font-medium"
+      aria-label={`Duplicate ${workflowName}`}
+    >
+      Duplicate Workflow
+    </button>
+  );
+};
+
+export default DuplicateBtn;

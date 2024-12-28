@@ -8,17 +8,33 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Plus } from "lucide-react";
 
 export default function WorkflowSkeleton() {
+  // Generate placeholder skeletons dynamically for better scalability
+  const skeletonItems = Array.from({ length: 3 }).map((_, index) => (
+    <Skeleton
+      key={`workflow-skeleton-${index}`}
+      className="w-full h-5 rounded-lg"
+      aria-hidden="true"
+    />
+  ));
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Workflows</SidebarGroupLabel>
-      <SidebarGroupAction className="p-2">
-        <Plus />
+
+      <SidebarGroupAction className="p-2" aria-label="Add workflow">
+        <Plus aria-hidden="true" />
       </SidebarGroupAction>
-      <SidebarGroupContent className="py-2 space-y-3 items-center flex flex-col w-full ">
-        <Skeleton className="w-full h-5 rounded-lg" />
-        <Skeleton className="w-full h-5 rounded-lg" />
-        <Skeleton className="w-full h-5 rounded-lg" />
-        <Skeleton className="w-full h-10 rounded-lg " />
+
+      <SidebarGroupContent
+        className="py-2 space-y-3 flex flex-col items-center w-full"
+        aria-busy="true"
+      >
+        {skeletonItems}
+        <Skeleton
+          className="w-full h-10 rounded-lg"
+          aria-hidden="true"
+          role="presentation"
+        />
       </SidebarGroupContent>
     </SidebarGroup>
   );

@@ -34,7 +34,7 @@ export default async function Workflow() {
   const userDetails = await get();
 
   if (!userDetails) {
-    return <div>Error loading workflows.</div>; // Fallback message if user details can't be loaded
+    return <div>Error loading workflows.</div>; 
   }
 
   const { Workflows = [] } = userDetails;

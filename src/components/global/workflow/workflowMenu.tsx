@@ -19,17 +19,22 @@ import DeleteBtn from "./deleteBtn";
 import DuplicateBtn from "./duplicateBtn";
 import DeactivateBtn from "./deactivateBtn";
 
-export default function WorkflowMenu({ workflow }: { workflow: String }) {
+interface WorkflowMenuProps {
+  workflow: string; // Replaced `String` with `string` for correct TypeScript type
+}
+
+const WorkflowMenu: React.FC<WorkflowMenuProps> = ({ workflow }) => {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild>
-        <Link href={"/editor/" + workflow}>
-          <span>{workflow}</span>
+        <Link href={`/editor/${workflow}`}>
+          <span className="text-base">{workflow}</span>{" "}
+          {/* Added class for consistent styling */}
         </Link>
       </SidebarMenuButton>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <SidebarMenuAction>
+          <SidebarMenuAction aria-label="Options for this workflow">
             <MoreHorizontal />
           </SidebarMenuAction>
         </DropdownMenuTrigger>
@@ -47,4 +52,6 @@ export default function WorkflowMenu({ workflow }: { workflow: String }) {
       </DropdownMenu>
     </SidebarMenuItem>
   );
-}
+};
+
+export default WorkflowMenu;

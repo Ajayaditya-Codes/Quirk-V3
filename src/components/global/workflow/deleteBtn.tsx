@@ -1,32 +1,35 @@
 "use client";
-import * as React from "react";
-  import { useRouter } from "next/navigation";
+
+import React from "react";
+import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
-export default function DeleteBtn({ workflowName }: { workflowName: String }) {
+interface DeleteBtnProps {
+  workflowName: string; // Replaced String with string for correct TypeScript usage
+}
+
+const DeleteBtn: React.FC<DeleteBtnProps> = ({ workflowName }) => {
   const router = useRouter();
 
   const handler = async () => {
-    const promise = new Promise(async (resolve, reject) => {
+    const promise = new Promise<void>(async (resolve, reject) => {
       try {
         const response = await fetch("/api/workflow/delete", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            workflowName,
-          }),
+          body: JSON.stringify({ workflowName }),
         });
 
         if (response.ok) {
-          resolve(workflowName); // Success case
+          resolve(); // Success case
         } else {
           const errorData = await response.json();
           reject(new Error(errorData.error || "Workflow deletion failed"));
         }
       } catch (error) {
-        reject(error); // Unexpected errors
+        reject(new Error("Unexpected error occurred during deletion"));
       }
     });
 
@@ -37,7 +40,9 @@ export default function DeleteBtn({ workflowName }: { workflowName: String }) {
       },
       error: (error) => ({
         title: "Deletion Failed",
-        description: error.message || "An unexpected error occurred while deleting the workflow.",
+        description:
+          error.message ||
+          "An unexpected error occurred while deleting the workflow.",
       }),
       loading: {
         title: "Deleting Workflow...",
@@ -48,14 +53,21 @@ export default function DeleteBtn({ workflowName }: { workflowName: String }) {
     // Handle post-toast logic
     try {
       await promise;
-      router.refresh();
+      router.refresh(); // Refresh the page after successful deletion
     } catch (error) {
-      console.log("Error during workflow deletion:", error);
+      console.error("Error during workflow deletion:", error);
     }
   };
-    return (
-    <span onClick={handler} className="text-red-600"> 
+
+  return (
+    <button
+      onClick={handler}
+      className="text-red-600 text-sm font-medium"
+      aria-label={`Delete ${workflowName}`}
+    >
       Delete Workflow
-    </span>
+    </button>
   );
-}
+};
+
+export default DeleteBtn;

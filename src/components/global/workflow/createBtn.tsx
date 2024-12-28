@@ -1,26 +1,25 @@
 "use client";
+
 import * as React from "react";
 import { Plus } from "lucide-react";
-  import { generate } from "random-words";
-  import { useRouter } from "next/navigation";
+import { generate } from "random-words";
+import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
-export default function CreateBtn() {
+const CreateBtn: React.FC = () => {
   const router = useRouter();
 
   const handler = async () => {
-    const workflowName = join(generate(3));
+    const workflowName = joinWords(generate({ exactly: 3 }) as string[]);
 
-    const promise = new Promise(async (resolve, reject) => {
+    const promise = new Promise<string>(async (resolve, reject) => {
       try {
         const response = await fetch("/api/workflow/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            workflowName,
-          }),
+          body: JSON.stringify({ workflowName }),
         });
 
         if (response.ok) {
@@ -30,7 +29,7 @@ export default function CreateBtn() {
           reject(new Error(errorData.error || "Workflow creation failed"));
         }
       } catch (error) {
-        reject(error); // Unexpected errors
+        reject(new Error("Network error occurred while creating workflow."));
       }
     });
 
@@ -49,27 +48,29 @@ export default function CreateBtn() {
       },
     });
 
-    // Handle post-toast logic, e.g., refreshing the page after success
     try {
       await promise;
-      router.refresh();
+      router.refresh(); // Refresh the page after a successful workflow creation
     } catch (error) {
-      console.log("Error during workflow creation:", error);
+      console.error("Error during workflow creation:", error);
     }
   };
 
-  const join = (strings: String[] | String) => {
-    let result = "";
-    for (const string of strings) {
-      result += string[0].toUpperCase() + string.slice(1);
-      result += "-";
-    }
-    return result.slice(0, -1);
+  const joinWords = (words: string[]): string => {
+    return words
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join("-");
   };
 
   return (
-    <span onClick={handler}>
+    <button
+      onClick={handler}
+      className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+      aria-label="Create Workflow"
+    >
       <Plus size={15} />
-    </span>
+    </button>
   );
-}
+};
+
+export default CreateBtn;
