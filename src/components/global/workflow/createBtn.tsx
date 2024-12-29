@@ -63,13 +63,13 @@ const CreateBtn: React.FC = () => {
   };
 
   return (
-    <button
+    <span
       onClick={handler}
       className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
       aria-label="Create Workflow"
     >
       <Plus size={15} />
-    </button>
+    </span>
   );
 };
 

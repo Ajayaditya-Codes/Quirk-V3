@@ -19,47 +19,66 @@ export async function GET(req: NextRequest) {
   const client_id = process.env.GITHUB_CLIENT_ID;
   const client_secret = process.env.GITHUB_CLIENT_SECRET;
 
+  if (!client_id || !client_secret) {
+    return NextResponse.json(
+      { error: "GitHub client credentials are not set" },
+      { status: 500 }
+    );
+  }
+
   try {
     const response = await fetch(githubTokenURL, {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
+      headers: { Accept: "application/json" },
       body: new URLSearchParams({
-        code: code,
-        client_id: client_id as string,
-        client_secret: client_secret as string,
+        code,
+        client_id,
+        client_secret,
       }),
     });
 
-    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(`GitHub token API error: ${response.status}`);
+    }
 
-    await updateGithubAccessToken(data.access_token);
+    const { access_token } = await response.json();
+
+    if (!access_token) {
+      return NextResponse.json(
+        { error: "Failed to retrieve GitHub access token" },
+        { status: 400 }
+      );
+    }
+
+    await updateGithubAccessToken(access_token);
+
     return NextResponse.redirect("https://localhost:3000/connections");
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching GitHub access token:", error);
     return NextResponse.json(
-      { error: "Failed to fetch access token" },
+      { error: "Failed to fetch GitHub access token" },
       { status: 500 }
     );
   }
 }
 
 async function updateGithubAccessToken(githubAccessToken: string) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  const userId = user?.id;
-
   try {
-    userId &&
-      (await db
-        .update(Users)
-        .set({
-          GitHubAccessToken: githubAccessToken,
-        })
-        .where(eq(Users.KindeID, userId))
-        .execute());
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+    const userId = user?.id;
+
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    await db
+      .update(Users)
+      .set({ GitHubAccessToken: githubAccessToken })
+      .where(eq(Users.KindeID, userId))
+      .execute();
   } catch (error) {
+    console.error("Error updating GitHub access token:", error);
     throw new Error("Failed to update GitHub access token");
   }
 }
