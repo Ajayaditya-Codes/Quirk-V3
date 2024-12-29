@@ -4,9 +4,9 @@ import { Logs, Users, Workflows } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   const { getUser } = getKindeServerSession();
-  const {id} = await getUser();
+  const { id } = await getUser();
 
   if (!id) {
     return NextResponse.json(
@@ -90,7 +90,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Failed to Add Workflow:", error);
-
 
     return NextResponse.json(
       { error: "Failed to add workflow" },

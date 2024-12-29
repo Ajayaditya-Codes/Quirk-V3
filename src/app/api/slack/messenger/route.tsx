@@ -1,13 +1,12 @@
 import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { channel, text, token } = await req.json();
-    let slackToken = token;
+    const { channel, text } = await req.json();
 
     if (!channel || !text) {
       return NextResponse.json(
@@ -16,31 +15,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (slackToken === null) {
-      const { userId } = await auth();
-      let userDetails = null;
-      try {
-        const result =
-          userId &&
-          (await db
-            .select()
-            .from(Users)
-            .where(eq(Users.ClerkID, userId))
-            .execute());
+    const { getUser } = getKindeServerSession();
+    const userSession = await getUser();
 
-        userDetails = result && result.length > 0 ? result[0] : null;
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
+    if (!userSession?.id) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
 
-      slackToken = userDetails?.SlackAccessToken;
+    const [userRecord] = await db
+      .select({ SlackAccessToken: Users.SlackAccessToken })
+      .from(Users)
+      .where(eq(Users.KindeID, userSession.id))
+      .execute();
 
-      if (!slackToken) {
-        return NextResponse.json(
-          { error: "Slack token is not set" },
-          { status: 500 }
-        );
-      }
+    const slackToken = userRecord?.SlackAccessToken;
+
+    if (!slackToken) {
+      return NextResponse.json(
+        { error: "Slack token is not set" },
+        { status: 404 }
+      );
     }
 
     const response = await fetch("https://slack.com/api/chat.postMessage", {
@@ -49,10 +46,7 @@ export async function POST(req: NextRequest) {
         Authorization: `Bearer ${slackToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        channel: channel,
-        text: text,
-      }),
+      body: JSON.stringify({ channel, text }),
     });
 
     const data = await response.json();

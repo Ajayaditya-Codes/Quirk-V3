@@ -6,8 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const Asana = require("asana");
-  const { projectIds, taskName, taskNotes, token } = await req.json();
-  let asanaRefreshToken = token;
+  const { projectIds, taskName, taskNotes } = await req.json();
 
   if (!projectIds || !taskName) {
     return NextResponse.json(
@@ -16,33 +15,31 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (asanaRefreshToken === null) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-    const userId = user?.id;
-    if (!userId) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 }
-      );
-    }
-
-    const userRecord = await db
-      .select()
-      .from(Users)
-      .where(eq(Users.KindeID, userId))
-      .execute();
-
-    if (!userRecord.length || !userRecord[0].AsanaRefreshToken) {
-      return NextResponse.json(
-        { error: "No Asana refresh token found" },
-        { status: 404 }
-      );
-    }
-
-    asanaRefreshToken = userRecord[0].AsanaRefreshToken;
+  const userId = user?.id;
+  if (!userId) {
+    return NextResponse.json(
+      { error: "User not authenticated" },
+      { status: 401 }
+    );
   }
+
+  const userRecord = await db
+    .select()
+    .from(Users)
+    .where(eq(Users.KindeID, userId))
+    .execute();
+
+  if (!userRecord.length || !userRecord[0].AsanaRefreshToken) {
+    return NextResponse.json(
+      { error: "No Asana refresh token found" },
+      { status: 404 }
+    );
+  }
+
+  const asanaRefreshToken = userRecord[0].AsanaRefreshToken;
 
   const tokenUrl = "https://app.asana.com/-/oauth_token";
   const clientId = process.env.ASANA_CLIENT_ID;

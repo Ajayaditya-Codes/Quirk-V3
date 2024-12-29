@@ -1,36 +1,36 @@
 import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export async function GET() {
-  const { userId } = await auth();
-  let userDetails = null;
   try {
-    const result =
-      userId &&
-      (await db
-        .select()
-        .from(Users)
-        .where(eq(Users.ClerkID, userId))
-        .execute());
+    const { getUser } = getKindeServerSession();
+    const userSession = await getUser();
 
-    userDetails = result && result.length > 0 ? result[0] : null;
-  } catch (error) {
-    console.error("Error fetching user details:", error);
-  }
+    if (!userSession?.id) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
 
-  const slackToken = userDetails?.SlackAccessToken;
+    const [userRecord] = await db
+      .select({ SlackAccessToken: Users.SlackAccessToken })
+      .from(Users)
+      .where(eq(Users.KindeID, userSession.id))
+      .execute();
 
-  if (!slackToken) {
-    return NextResponse.json(
-      { error: "Slack token is not set" },
-      { status: 500 }
-    );
-  }
+    const slackToken = userRecord?.SlackAccessToken;
 
-  try {
+    if (!slackToken) {
+      return NextResponse.json(
+        { error: "Slack token is not set" },
+        { status: 404 }
+      );
+    }
+
     const response = await fetch(
       "https://slack.com/api/users.conversations?types=public_channel,private_channel&exclude_archived=true",
       {
@@ -50,9 +50,9 @@ export async function GET() {
 
     return NextResponse.json({ channels: data.channels });
   } catch (error) {
-    console.error("Error fetching Slack channels:", error);
+    console.error("Error processing request:", error);
     return NextResponse.json(
-      { error: "Failed to fetch Slack channels" },
+      { error: "An unexpected error occurred" },
       { status: 500 }
     );
   }

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
-import { Users, Workflows } from "@/db/schema";
+import { Logs, Users, Workflows } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(req: NextRequest): Promise<NextResponse> {
   const { getUser } = getKindeServerSession();
   const { id } = await getUser();
 
@@ -69,6 +69,7 @@ export async function DELETE(req: NextRequest) {
       .where(eq(Workflows.WorkflowName, workflowName))
       .execute();
 
+    await db.delete(Logs).where(eq(Logs.WorkflowName, workflowName)).execute();
   } catch (error) {
     console.error("Failed to delete workflow:", error);
     return NextResponse.json(
