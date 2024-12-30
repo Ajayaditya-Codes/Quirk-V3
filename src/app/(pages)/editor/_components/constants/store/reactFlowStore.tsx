@@ -1,6 +1,9 @@
 import { addEdge, DefaultEdgeOptions, Edge, Node } from "@xyflow/react";
 import { create } from "zustand";
 import GitHubNode from "../nodes/githubNode";
+import AsanaNode from "../nodes/asanaNode";
+import SlackNode from "../nodes/slackNode";
+import ConditionNode from "../nodes/conditionNode";
 
 type FlowState = {
   nodes: Node[];
@@ -8,9 +11,9 @@ type FlowState = {
   edgeOptions: DefaultEdgeOptions;
   nodeTypes: {
     github: typeof GitHubNode;
-    // asana: typeof AsanaNode;
-    // slack: typeof SlackNode;
-    // condition: typeof ConditionNode;
+    asana: typeof AsanaNode;
+    slack: typeof SlackNode;
+    condition: typeof ConditionNode;
   };
   addNode: (node: Node) => void;
   removeNode: (nodeId: string) => void;
@@ -49,9 +52,9 @@ export const useFlowStore = create<FlowState>((set) => ({
   },
   nodeTypes: {
     github: GitHubNode,
-    // asana: AsanaNode,
-    // slack: SlackNode,
-    // condition: ConditionNode,
+    asana: AsanaNode,
+    slack: SlackNode,
+    condition: ConditionNode,
   },
 
   addNode: (node) =>
@@ -107,8 +110,8 @@ export const useFlowStore = create<FlowState>((set) => ({
         listenerType: "",
       },
       position: {
-        x: Math.floor(Math.random() * 600) - 300, // Random x between -1000 and 1000
-        y: Math.floor(Math.random() * 600) - 300, // Random y between -1000 and 1000
+        x: Math.floor(Math.random() * 600),
+        y: (Math.random() < 0.5 ? -1 : 1) * 50,
       },
     };
     set((state) => ({
@@ -125,8 +128,8 @@ export const useFlowStore = create<FlowState>((set) => ({
         message: "",
       },
       position: {
-        x: Math.floor(Math.random() * 600) - 300,
-        y: Math.floor(Math.random() * 600) - 300,
+        x: Math.floor(Math.random() * 600),
+        y: (Math.random() < 0.5 ? -1 : 1) * 50,
       },
     };
     set((state) => ({
@@ -144,8 +147,8 @@ export const useFlowStore = create<FlowState>((set) => ({
         taskNotes: "",
       },
       position: {
-        x: Math.floor(Math.random() * 600) - 300,
-        y: Math.floor(Math.random() * 600) - 300,
+        x: Math.floor(Math.random() * 600),
+        y: (Math.random() < 0.5 ? -1 : 1) * 100,
       },
     };
     set((state) => ({
@@ -163,8 +166,8 @@ export const useFlowStore = create<FlowState>((set) => ({
         value: "",
       },
       position: {
-        x: Math.floor(Math.random() * 600) - 300,
-        y: Math.floor(Math.random() * 600) - 300,
+        x: Math.floor(Math.random() * 600),
+        y: (Math.random() < 0.5 ? -1 : 1) * 50,
       },
     };
     set((state) => ({
