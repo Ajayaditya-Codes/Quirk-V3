@@ -24,7 +24,7 @@ export function Menu() {
           <SquareChevronLeft size="50" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right">
+      <SheetContent side="right" className="w-[370px]">
         <SheetHeader>
           <SheetTitle className="text-2xl my-5">Workflow Nodes</SheetTitle>
         </SheetHeader>

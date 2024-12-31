@@ -61,7 +61,7 @@ const DuplicateBtn: React.FC<DuplicateBtnProps> = ({ workflowName }) => {
       await promise;
       router.refresh(); // Refresh the page after successful duplication
     } catch (error) {
-      console.log("Error during workflow duplication:", error);
+      console.error("Error during workflow duplication:", error);
     }
   };
 

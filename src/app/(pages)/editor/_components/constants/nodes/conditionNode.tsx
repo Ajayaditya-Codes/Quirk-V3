@@ -44,13 +44,13 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
 
 const Node = () => {
   return (
-    <button className="dark:bg-neutral-900 bg-white rounded-xl w-full items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
+    <span className="dark:bg-neutral-900 bg-white rounded-xl w-full items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
       <GitBranch />
       <div className="flex flex-col justify-start items-start">
         <h5 className="text-lg font-semibold">Condition</h5>
         <p className="text-gray-400">Control Trigger Flow</p>
       </div>
-    </button>
+    </span>
   );
 };
 

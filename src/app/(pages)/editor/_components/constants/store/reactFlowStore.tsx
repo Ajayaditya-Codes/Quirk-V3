@@ -27,6 +27,13 @@ type FlowState = {
   asanaHandler: () => void;
   conditionHandler: () => void;
 
+  repos: string[];
+  setRepos: (repos: string[]) => void;
+  channels: string[];
+  setChannels: (channels: string[]) => void;
+  projects: { id: string; name: string }[];
+  setProjects: (projects: { id: string; name: string }[]) => void;
+
   saveStatus: boolean;
   updateSaveState: (status: boolean) => void;
 };
@@ -174,6 +181,12 @@ export const useFlowStore = create<FlowState>((set) => ({
       nodes: [...state.nodes, newNode],
     }));
   },
+  repos: [],
+  setRepos: (repos) => set({ repos }),
+  channels: [],
+  setChannels: (channels) => set({ channels }),
+  projects: [],
+  setProjects: (projects) => set({ projects }),
   saveStatus: true,
   updateSaveState: (status) => set(() => ({ saveStatus: status })),
 }));
