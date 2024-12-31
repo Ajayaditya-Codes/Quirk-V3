@@ -39,17 +39,7 @@ type FlowState = {
 };
 
 export const useFlowStore = create<FlowState>((set) => ({
-  nodes: [
-    {
-      id: "github-1",
-      type: "github",
-      data: {
-        repoName: "",
-        listenerType: "issues",
-      },
-      position: { x: 0, y: 0 },
-    },
-  ],
+  nodes: [],
   edges: [],
   edgeOptions: {
     animated: true,

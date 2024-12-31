@@ -36,6 +36,7 @@ export default function Editor() {
     setRepos,
     setChannels,
     setProjects,
+    saveStatus,
   } = useFlowStore();
 
   const onNodesChange = useCallback(

@@ -33,7 +33,7 @@ type GitHubNodeProps = NodeProps<GitHubNode>;
 
 const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
   const { repoName, listenerType } = data;
-  const { repos, setNodes, nodes } = useFlowStore();
+  const { repos, setNodes, nodes, updateSaveState } = useFlowStore();
   const [selectedRepo, setSelectedRepo] = useState<string>(
     repoName || repos[0]
   );
@@ -56,7 +56,7 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
           : node
       )
     );
-
+    updateSaveState(false);
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
 

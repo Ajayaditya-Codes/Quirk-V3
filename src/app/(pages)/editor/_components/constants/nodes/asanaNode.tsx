@@ -41,7 +41,7 @@ type AsanaNodeProps = NodeProps<AsanaNode>;
 
 const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
   const { project, taskName, taskNotes } = data;
-  const { projects, setNodes, nodes } = useFlowStore();
+  const { projects, setNodes, nodes, updateSaveState } = useFlowStore();
   const [selectedProject, setSelectedProject] = useState<Project>(
     project || projects[0]
   );
@@ -57,13 +57,14 @@ const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
               data: {
                 ...node.data,
                 project: selectedProject,
-                taskName: taskName,
-                taskNotes: taskNotes,
+                taskName: newTaskName,
+                taskNotes: newTaskNotes,
               },
             }
           : node
       )
     );
+    updateSaveState(false);
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
   const variableAdder = (variable: string) => {

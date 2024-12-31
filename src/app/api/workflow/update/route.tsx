@@ -172,9 +172,9 @@ export async function POST(req: NextRequest) {
       .execute();
 
     await db.insert(Logs).values({
-      LogMessage: `Workflow ${workflowName} updated by user ${userSession.id}${
-        publish ? " and published" : ""
-      }`,
+      LogMessage: `Workflow ${workflowName} updated by user ${
+        userSession.username
+      }${publish ? " and published" : ""}`,
       WorkflowName: workflowName,
       Success: true,
     });

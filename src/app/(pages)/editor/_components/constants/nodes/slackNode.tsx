@@ -34,7 +34,7 @@ type SlackNodeProps = NodeProps<SlackNode>;
 
 const SlackNode: React.FC<SlackNodeProps> = ({ id, data }) => {
   const { channel, message } = data;
-  const { channels, setNodes, nodes } = useFlowStore();
+  const { channels, setNodes, nodes, updateSaveState } = useFlowStore();
   const [selectedChannel, setSelectedChannel] = useState<string>(
     channel || channels[0]
   );
@@ -55,7 +55,7 @@ const SlackNode: React.FC<SlackNodeProps> = ({ id, data }) => {
           : node
       )
     );
-
+    updateSaveState(false);
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
 
