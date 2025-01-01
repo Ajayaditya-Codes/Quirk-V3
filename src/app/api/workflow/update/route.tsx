@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { Logs, Workflows, Users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { ConsoleLogWriter, eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export async function POST(req: NextRequest) {
@@ -82,6 +82,7 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({
               repo: oldGitHubData.repoName,
               hookId: existingWorkflow[0].HookID,
+              id: userSession.id,
             }),
           }
         );
@@ -127,6 +128,7 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({
             repo: githubData.repoName,
             workflow: workflowName,
+            id: userSession.id,
           }),
         });
 
@@ -173,7 +175,7 @@ export async function POST(req: NextRequest) {
 
     await db.insert(Logs).values({
       LogMessage: `Workflow ${workflowName} updated by user ${
-        userSession.username
+        user[0].Username
       }${publish ? " and published" : ""}`,
       WorkflowName: workflowName,
       Success: true,

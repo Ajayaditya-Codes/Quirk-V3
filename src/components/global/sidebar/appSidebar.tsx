@@ -2,7 +2,6 @@ import {
   Home,
   Unplug,
   SquareTerminal,
-  LayoutPanelTop,
   BadgeDollarSign,
   LogOut,
 } from "lucide-react";
@@ -48,7 +47,6 @@ const AppSidebar: FC = () => {
               </Suspense>
 
               <MenuItem icon={<SquareTerminal size={20} />} item="Logs" />
-              <MenuItem icon={<LayoutPanelTop size={20} />} item="Template" />
 
               {/* Profile Section */}
               <SidebarGroup>
