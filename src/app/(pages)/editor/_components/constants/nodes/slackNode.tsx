@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import VariableScrollArea from "../../sheet/Github Variables/variableScrollArea";
+import { env } from "process";
 
 type SlackNodeData = {
   id: String;
@@ -47,12 +48,16 @@ type SlackNodeProps = NodeProps<SlackNode>;
 
 const SlackNode: React.FC<SlackNodeProps> = ({ id, data }) => {
   const { channel, message } = data;
-  const { channels, setNodes, nodes, updateSaveState, edges, setEdges } =
-    useFlowStore();
+  const { channels, setNodes, nodes, edges, setEdges } = useFlowStore();
   const [selectedChannel, setSelectedChannel] = useState<string>(
     channel || channels[0]
   );
   const [newMessage, setMessage] = useState<string>(message as string);
+
+  const source = () => {
+    const source = edges.find((edge) => edge.target === id);
+    return source?.source.startsWith("gpt");
+  };
 
   const handler = () => {
     setNodes(
@@ -63,18 +68,17 @@ const SlackNode: React.FC<SlackNodeProps> = ({ id, data }) => {
               data: {
                 ...node.data,
                 channel: selectedChannel,
-                message: newMessage,
+                message: source() ? "c7awKoAvbe" : newMessage,
               },
             }
           : node
       )
     );
-    updateSaveState(false);
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
 
   const variableAdder = (variable: string) => {
-    setMessage(newMessage + "var::" + variable + " ");
+    !source() && setMessage(newMessage + "var::" + variable + " ");
   };
 
   const handleDeleteNode = () => {
@@ -82,14 +86,12 @@ const SlackNode: React.FC<SlackNodeProps> = ({ id, data }) => {
     const updatedEdges = edges.filter(
       (el: Edge) => el.source !== id && el.target !== id
     );
-    updateSaveState(false);
     setNodes(updatedNodes);
     setEdges(updatedEdges);
   };
 
   const handleDeleteEdge = () => {
     const updatedEdges = edges.filter((el: Edge) => el.target !== id);
-    updateSaveState(false);
     setEdges(updatedEdges);
   };
 
@@ -148,7 +150,8 @@ const SlackNode: React.FC<SlackNodeProps> = ({ id, data }) => {
                       Message
                     </label>
                     <Textarea
-                      value={newMessage}
+                      disabled={source()}
+                      value={source() ? "GPT Handler" : newMessage}
                       onChange={(e) => setMessage(e.target.value)}
                       className="w-full p-2 border  text-md rounded-md"
                     />

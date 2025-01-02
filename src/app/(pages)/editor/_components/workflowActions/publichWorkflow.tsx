@@ -8,7 +8,7 @@ import { useFlowStore } from "../constants/store/reactFlowStore";
 export default function PublishWorkflow() {
   const path = usePathname();
   const slug = path?.split("/").pop();
-  const { nodes, edges, updateSaveState } = useFlowStore();
+  const { nodes, edges } = useFlowStore();
 
   const handler = async (): Promise<void> => {
     let githubData = nodes[0];
@@ -48,7 +48,6 @@ export default function PublishWorkflow() {
           return;
         }
 
-        updateSaveState(true);
         resolve("Workflow Published Successfully");
       } catch (error) {
         reject(new Error("Failed to Publish the Workflow"));

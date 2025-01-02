@@ -48,7 +48,7 @@ type ConditionNodeProps = NodeProps<ConditionNode>;
 
 const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
   const { variable, condition, value } = data;
-  const { setNodes, nodes, updateSaveState, edges, setEdges } = useFlowStore();
+  const { setNodes, nodes, edges, setEdges } = useFlowStore();
   const [newVariable, setVariable] = useState<string>(variable as string);
   const [newCondition, setCondition] = useState<ConditionNodeData["condition"]>(
     condition || "=="
@@ -71,7 +71,6 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
           : node
       )
     );
-    updateSaveState(false);
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
 
@@ -80,14 +79,12 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
     const updatedEdges = edges.filter(
       (el: Edge) => el.source !== id && el.target !== id
     );
-    updateSaveState(false);
     setNodes(updatedNodes);
     setEdges(updatedEdges);
   };
 
   const handleDeleteEdge = () => {
     const updatedEdges = edges.filter((el: Edge) => el.target !== id);
-    updateSaveState(false);
     setEdges(updatedEdges);
   };
 

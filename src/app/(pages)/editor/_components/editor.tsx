@@ -31,17 +31,14 @@ export default function Editor() {
     setNodes,
     setEdges,
     addNewEdge,
-    updateSaveState,
     nodeTypes,
     setRepos,
     setChannels,
     setProjects,
-    saveStatus,
   } = useFlowStore();
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      updateSaveState(false);
       const updatedNodes = applyNodeChanges(changes, nodes);
       setNodes(updatedNodes);
     },
@@ -50,7 +47,6 @@ export default function Editor() {
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
-      updateSaveState(false);
       const updatedEdges = applyEdgeChanges(changes, edges);
       setEdges(updatedEdges);
     },
@@ -59,7 +55,6 @@ export default function Editor() {
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      updateSaveState(false);
       addNewEdge(connection);
     },
     [addNewEdge]

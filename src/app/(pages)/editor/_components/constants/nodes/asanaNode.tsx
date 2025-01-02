@@ -54,13 +54,17 @@ type AsanaNodeProps = NodeProps<AsanaNode>;
 
 const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
   const { project, taskName, taskNotes } = data;
-  const { projects, setNodes, nodes, updateSaveState, edges, setEdges } =
-    useFlowStore();
+  const { projects, setNodes, nodes, edges, setEdges } = useFlowStore();
   const [selectedProject, setSelectedProject] = useState<Project>(
     project || projects[0]
   );
   const [newTaskName, setTaskName] = useState<string>(taskName as string);
   const [newTaskNotes, setTaskNotes] = useState<string>(taskNotes as string);
+
+  const source = () => {
+    const source = edges.find((edge) => edge.target === id);
+    return source?.source.startsWith("gpt");
+  };
 
   const handler = () => {
     setNodes(
@@ -72,17 +76,16 @@ const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
                 ...node.data,
                 project: selectedProject,
                 taskName: newTaskName,
-                taskNotes: newTaskNotes,
+                taskNotes: source() ? "c7awKoAvbe" : newTaskNotes,
               },
             }
           : node
       )
     );
-    updateSaveState(false);
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
   const variableAdder = (variable: string) => {
-    setTaskNotes(newTaskNotes + "var::" + variable + " ");
+    !source() && setTaskNotes(newTaskNotes + "var::" + variable + " ");
   };
 
   const handleDeleteNode = () => {
@@ -90,14 +93,12 @@ const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
     const updatedEdges = edges.filter(
       (el: Edge) => el.source !== id && el.target !== id
     );
-    updateSaveState(false);
     setNodes(updatedNodes);
     setEdges(updatedEdges);
   };
 
   const handleDeleteEdge = () => {
     const updatedEdges = edges.filter((el: Edge) => el.target !== id);
-    updateSaveState(false);
     setEdges(updatedEdges);
   };
 
@@ -175,7 +176,8 @@ const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
                       Task Notes
                     </label>
                     <Textarea
-                      value={newTaskNotes}
+                      disabled={source()}
+                      value={source() ? "GPT Handler" : newTaskNotes}
                       onChange={(e) => setTaskNotes(e.target.value)}
                       className="w-full p-2 border text-md rounded-md "
                     />

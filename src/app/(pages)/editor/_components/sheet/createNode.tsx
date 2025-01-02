@@ -18,7 +18,8 @@ const CreateNode: FC<CreateNodeProps> = ({
   actionDescription,
   disabled,
 }) => {
-  const { slackHandler, asanaHandler, conditionHandler } = useFlowStore();
+  const { slackHandler, asanaHandler, conditionHandler, gptHandler } =
+    useFlowStore();
 
   const handler = (name: string) => {
     switch (name) {
@@ -42,6 +43,9 @@ const CreateNode: FC<CreateNodeProps> = ({
           title: "Trello Coming Soon",
           type: "warning",
         });
+        break;
+      case "GPT Webhook Handler":
+        gptHandler();
         break;
       default:
         break;

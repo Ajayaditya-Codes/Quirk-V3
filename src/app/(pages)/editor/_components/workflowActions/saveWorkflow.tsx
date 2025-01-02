@@ -8,7 +8,7 @@ import { toaster } from "@/components/ui/toaster";
 export default function SaveWorkflow() {
   const path = usePathname();
   const slug = path?.split("/").pop();
-  const { nodes, edges, updateSaveState } = useFlowStore();
+  const { nodes, edges } = useFlowStore();
 
   const handler = async (): Promise<void> => {
     let githubData = nodes[0];
@@ -47,7 +47,6 @@ export default function SaveWorkflow() {
           return;
         }
 
-        updateSaveState(true);
         resolve("Workflow Saved Successfully");
       } catch (error) {
         reject(new Error("Failed to Save the Workflow"));

@@ -4,6 +4,7 @@ import GitHubNode from "../nodes/githubNode";
 import AsanaNode from "../nodes/asanaNode";
 import SlackNode from "../nodes/slackNode";
 import ConditionNode from "../nodes/conditionNode";
+import GPTNode from "../nodes/gpt";
 
 type FlowState = {
   nodes: Node[];
@@ -14,6 +15,7 @@ type FlowState = {
     asana: typeof AsanaNode;
     slack: typeof SlackNode;
     condition: typeof ConditionNode;
+    gpt: typeof GPTNode;
   };
   addNode: (node: Node) => void;
   removeNode: (nodeId: string) => void;
@@ -26,6 +28,7 @@ type FlowState = {
   slackHandler: () => void;
   asanaHandler: () => void;
   conditionHandler: () => void;
+  gptHandler: () => void;
 
   repos: string[];
   setRepos: (repos: string[]) => void;
@@ -33,9 +36,6 @@ type FlowState = {
   setChannels: (channels: string[]) => void;
   projects: { id: string; name: string }[];
   setProjects: (projects: { id: string; name: string }[]) => void;
-
-  saveStatus: boolean;
-  updateSaveState: (status: boolean) => void;
 };
 
 export const useFlowStore = create<FlowState>((set) => ({
@@ -52,6 +52,7 @@ export const useFlowStore = create<FlowState>((set) => ({
     asana: AsanaNode,
     slack: SlackNode,
     condition: ConditionNode,
+    gpt: GPTNode,
   },
 
   addNode: (node) =>
@@ -79,8 +80,17 @@ export const useFlowStore = create<FlowState>((set) => ({
       const sourceNode = nodes.find((node) => node.id === connection.source);
 
       const isGitHubNode = (node: any) => node?.type === "github";
+      const isGPTNode = (node: any) => node?.type === "gpt";
+      const isConditionNode = (node: any) => node?.type === "condition";
 
-      if (isGitHubNode(targetNode) || isGitHubNode(sourceNode)) {
+      if (
+        (isConditionNode(targetNode) || isGPTNode(targetNode)) &&
+        isGPTNode(sourceNode)
+      ) {
+        return { edges: edges };
+      }
+
+      if (isGPTNode(sourceNode) || isGitHubNode(sourceNode)) {
         return { edges: addEdge(connection, edges) };
       }
 
@@ -153,6 +163,21 @@ export const useFlowStore = create<FlowState>((set) => ({
     }));
   },
 
+  gptHandler: () => {
+    const newNode: Node = {
+      id: `gpt-${Math.random().toString(36).slice(2, 9)}`,
+      type: "gpt",
+      data: {},
+      position: {
+        x: Math.floor(Math.random() * 600),
+        y: (Math.random() < 0.5 ? -1 : 1) * 100,
+      },
+    };
+    set((state) => ({
+      nodes: [...state.nodes, newNode],
+    }));
+  },
+
   conditionHandler: () => {
     const newNode: Node = {
       id: `condition-${Math.random().toString(36).slice(2, 9)}`,
@@ -177,6 +202,4 @@ export const useFlowStore = create<FlowState>((set) => ({
   setChannels: (channels) => set({ channels }),
   projects: [],
   setProjects: (projects) => set({ projects }),
-  saveStatus: true,
-  updateSaveState: (status) => set(() => ({ saveStatus: status })),
 }));

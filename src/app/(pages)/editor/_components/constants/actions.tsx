@@ -3,6 +3,7 @@ import {
   IconBrandSlack,
   IconBrandAsana,
   IconBrandTrello,
+  IconBrandOpenai,
 } from "@tabler/icons-react";
 import { ReactNode } from "react";
 import { GitBranch } from "lucide-react";
@@ -41,5 +42,10 @@ export const Actions: Action[] = [
     name: "Condition",
     icon: <GitBranch />,
     description: "Control Trigger Flow",
+  },
+  {
+    name: "GPT Webhook Handler",
+    icon: <IconBrandOpenai />,
+    description: "Generate Messages using GPT",
   },
 ];
