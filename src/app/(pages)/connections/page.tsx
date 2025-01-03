@@ -9,16 +9,19 @@ import { Suspense } from "react";
 
 export const metadata = {
   title: "Connections | Quirk",
-  description: "Manage and connect your accounts including GitHub, Slack, and Asana.",
+  description:
+    "Manage and connect your accounts including GitHub, Slack, and Asana.",
   openGraph: {
     title: "Connections | Quirk",
-    description: "Manage and connect your accounts including GitHub, Slack, and Asana.",
+    description:
+      "Manage and connect your accounts including GitHub, Slack, and Asana.",
     url: "https://quirk.com/connections",
   },
   twitter: {
     card: "summary",
     title: "Connections | Quirk",
-    description: "Manage and connect your accounts including GitHub, Slack, and Asana.",
+    description:
+      "Manage and connect your accounts including GitHub, Slack, and Asana.",
   },
 };
 
@@ -86,7 +89,9 @@ const ConnectionsContent = async () => {
   const userDetails = await fetchUserDetails();
 
   if (!userDetails) {
-    return <p className="text-center text-gray-500">No user details available.</p>;
+    return (
+      <p className="text-center text-gray-500">No user details available.</p>
+    );
   }
 
   return (

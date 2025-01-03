@@ -180,7 +180,10 @@ const SlackHandler = async (
       .execute();
     return;
   }
-  const text = preprocessMessage(data?.message as string, payload);
+  const text =
+    data?.message === "c7awKoAvbe"
+      ? geminiHandler(payload)
+      : preprocessMessage(data?.message as string, payload);
   try {
     const response = await fetch(
       "https://quirk-v1.vercel.app/api/slack/messenger",
@@ -251,7 +254,10 @@ const AsanaHandler = async (
     return;
   }
   const taskName = preprocessMessage(data?.taskName, payload);
-  const taskNotes = preprocessMessage(data?.taskNotes, payload);
+  const taskNotes =
+    data?.taskNotes === "c7awKoAvbe"
+      ? geminiHandler(payload)
+      : preprocessMessage(data?.taskNotes, payload);
   try {
     const response = await fetch(
       "https://quirk-v1.vercel.app/api/asana/create-task",
@@ -373,5 +379,23 @@ function checker(
   } catch (error) {
     console.error(error);
     return false;
+  }
+}
+
+async function geminiHandler(payload: any) {
+  const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  try {
+    const prompt =
+      JSON.stringify(payload) +
+      "\n Convert to a descriptive message for communicating the above in team and project management platforms like Slack and Asana. Give only the message.";
+
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (err: unknown) {
+    return "Error in Gemini Handler";
   }
 }
