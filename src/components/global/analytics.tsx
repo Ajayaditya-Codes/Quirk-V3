@@ -110,6 +110,7 @@ export function Analytics({ logs }: { logs: Log[] }) {
     <Card>
       <CardHeader>
         <CardTitle>Workflow Analytics</CardTitle>
+        <CardDescription>Automate Your Github with Ease</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">

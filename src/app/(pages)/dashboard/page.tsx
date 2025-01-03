@@ -12,16 +12,16 @@ import { Suspense } from "react";
 
 export const metadata = {
   title: "Dashboard | Quirk",
-  description: "Automate your workflow with Quirk's powerful integrations.",
+  description: "Automate Your GitHub Workflow with Quirk",
   openGraph: {
     title: "dashboard | Quirk",
-    description: "Automate your workflow with Quirk's powerful integrations.",
+    description: "Automate Your GitHub Workflow with Quirk",
     url: "https://quirk.com/dashboard",
   },
   twitter: {
     card: "summary",
     title: "dashboard | Quirk",
-    description: "Automate your workflow with Quirk's powerful integrations.",
+    description: "Automate Your GitHub Workflow with Quirk",
   },
 };
 
@@ -161,7 +161,7 @@ export default function Dashboard() {
       <div className="w-full p-[3vh]">
         <Greet />
         <Suspense
-          fallback={<Skeleton className="w-full h-[300px] rounded-xl" />}
+          fallback={<Skeleton className="w-full h-[200px] rounded-xl" />}
         >
           <Chart />
         </Suspense>

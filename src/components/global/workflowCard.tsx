@@ -31,7 +31,9 @@ export default function WorkflowCard({ name }: Props) {
           </div>
           <div>
             <CardTitle className="text-lg mt-5">{name} Workflow</CardTitle>
-            <CardDescription>Automate Your Github Workflow</CardDescription>
+            <CardDescription>
+              Automate Your GitHub Workflow with Quirk
+            </CardDescription>
           </div>
         </CardHeader>
       </Card>

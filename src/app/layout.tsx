@@ -5,7 +5,7 @@ import { AuthProvider } from "@/providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Quirk",
-  description: "Automate Your GitHub Workflow",
+  description: "Automate Your GitHub Workflow with Quirk",
 };
 
 export default function RootLayout({

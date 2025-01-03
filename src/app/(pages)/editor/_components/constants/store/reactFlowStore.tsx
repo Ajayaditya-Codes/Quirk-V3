@@ -4,7 +4,7 @@ import GitHubNode from "../nodes/githubNode";
 import AsanaNode from "../nodes/asanaNode";
 import SlackNode from "../nodes/slackNode";
 import ConditionNode from "../nodes/conditionNode";
-import GPTNode from "../nodes/gpt";
+import GPTNode from "../nodes/gptNode";
 
 type FlowState = {
   nodes: Node[];
