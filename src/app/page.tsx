@@ -11,6 +11,9 @@ export default function Home() {
         <HeroSection />
         <FeaturesSection />
         <Testimonials />
+        <footer className="w-full flex flex-col items-center justify-center p-10">
+          © Quirk, 2024. All rights reserved.
+        </footer>{" "}
       </main>
     </div>
   );

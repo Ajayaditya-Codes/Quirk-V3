@@ -6,7 +6,7 @@ export default function SignUp() {
   return (
     <RegisterLink>
       <button className="px-5 font-semibold py-3 rounded-2xl bg-[#8a00c4] text-white">
-        Get Started
+        Get Started for Free
       </button>
     </RegisterLink>
   );
