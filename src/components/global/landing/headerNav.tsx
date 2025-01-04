@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function HeaderNav() {
   return (
-    <div className="w-full z-50 fixed top-0 flex flex-row justify-between items-center bg-white p-5 px-10 dark:bg-black">
+    <div className="z-50 fixed top-0 flex flex-row justify-between items-center bg-white p-5 lg:px-10 px-3 md:px-5 w-[100vw] dark:bg-inherit">
       <Link href="/">
         <div className="flex flex-row items-center justify-center gap-x-3">
           <Image

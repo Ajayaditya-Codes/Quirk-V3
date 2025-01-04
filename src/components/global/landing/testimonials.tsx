@@ -5,7 +5,7 @@ export default function Testimonials() {
     {
       title: "Finally, a tool that connects everything I need in one place!",
       description:
-        "This app has transformed the way I manage my workflows. The integration with GitHub, Slack, and Asana means I don’t have to juggle multiple tools anymore—it’s all seamlessly connected in one workspace. Now, every action triggers the right response without me lifting a finger!",
+        "This app has transformed the way I manage my workflows. The integration with GitHub, Slack, and Asana means I don’t have to juggle multiple tools anymore—it’s all seamlessly connected in one workspace. ",
     },
     {
       title: "The drag-and-drop editor is an absolute game-changer.",

@@ -13,8 +13,8 @@ import Image from "next/image";
 
 export default function FeaturesSection() {
   return (
-    <div className="flex flex-row w-[70%] my-[200px] mx-auto justify-center items-center space-x-10 h-[800px]">
-      <Card className="h-full items-center flex justify-center basis-1/3">
+    <div className="flex md:flex-row flex-col w-[70vw] my-[200px] mx-auto justify-center items-center gap-y-10 md:gap-y-0 md:gap-x-10 ">
+      <Card className="h-[800px] items-center flex justify-center md:basis-1/3">
         <CardContent>
           <div className=" flex flex-col items-center justify-center">
             <Image
@@ -37,10 +37,9 @@ export default function FeaturesSection() {
           </div>
         </CardContent>
       </Card>
-      <Card className="h-full items-center flex justify-center basis-1/3">
+      <Card className="h-[800px] items-center flex justify-center basis-1/3">
         <CardContent>
           <div className=" flex flex-col items-center justify-center">
-            {" "}
             <div className="relative flex h-[500px] w-full flex-col items-center justify-center">
               <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300 bg-clip-text text-center text-8xl font-semibold leading-none text-transparent dark:from-white dark:to-black">
                 Quirk
@@ -74,7 +73,7 @@ export default function FeaturesSection() {
           </div>
         </CardContent>
       </Card>
-      <Card className="h-full items-center flex justify-center basis-1/3">
+      <Card className="h-[800px] items-center flex justify-center basis-1/3">
         <CardContent>
           <div className=" flex flex-col items-center justify-center">
             <span className="dark:bg-neutral-900  bg-white rounded-xl items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
