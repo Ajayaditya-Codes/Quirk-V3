@@ -15,17 +15,17 @@ export default function Pricing() {
       <HeaderNav />
       <main className="p-10">
         <div className="flex flex-col items-center justify-center mt-[100px]">
-          <h1 className="text-5xl font-bold">
+          <h1 className="lg:text-5xl md:text-4xl sm:text-3xl text-2xl font-bold text-center  leading-[1.2]">
             Simple, Transparent Pricing for Every Team
           </h1>
-          <p className="text-lg text-center mt-5 w-[800px]">
+          <p className="md:text-xl sm:text-lg xs:text-base text-center mt-5 max-w-[800px]">
             Choose the plan that fits your needs and start automating workflows
             effortlessly. From startups to enterprises, we’ve got the perfect
             solution to help you save time, boost productivity, and focus on
             what matters most—without hidden fees or surprises.
           </p>
-          <div className="flex flex-row justify-center items-center gap-x-10 mt-20">
-            <Card className="border h-[650px] shadow-xl  w-[400px] rounded-2xl">
+          <div className="flex lg:flex-row flex-col justify-center items-center lg:gap-x-10 gap-y-10 lg:gap-y-0 mt-20">
+            <Card className="border min-h-[650px] shadow-xl w-[80vw] max-w-[400px] rounded-2xl">
               <CardHeader className="font-semibold">Basic</CardHeader>
               <CardContent>
                 <h2 className="text-7xl font-semibold">$0</h2>
@@ -65,7 +65,7 @@ export default function Pricing() {
                 </ul>
               </CardContent>
             </Card>
-            <Card className="w-[400px] h-[650px] text-white bg-[#8a00c4] border-0 relative rounded-2xl before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:blur-xl before:bg-gradient-to-r before:from-red-500 before:via-yellow-500 before:to-purple-500">
+            <Card className="w-[80vw] max-w-[400px] min-h-[650px] text-white bg-[#8a00c4] border-0 relative rounded-2xl before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:blur-xl before:bg-gradient-to-r before:from-red-500 before:via-yellow-500 before:to-purple-500">
               <CardHeader className="font-semibold">Premium</CardHeader>
               <CardContent>
                 <div className="flex flex-row justify-start items-end">
@@ -78,7 +78,7 @@ export default function Pricing() {
                   businesses needing robust tools and enhanced capabilities.
                   Let's build your perfect solution together.
                 </p>
-                <button className="my-10 rounded-2xl px-5 font-semibold py-3 text-white border border-white bg-transparent">
+                <button className="sm:px-5 px-3 font-semibold md:py-3 py-2 rounded-xl  text-sm md:text-base  md:rounded-2xl my-10  text-white border border-white bg-transparent">
                   Contact Dev Team
                 </button>
                 <h3 className="text-xl font-semibold mb-3">What's Included:</h3>

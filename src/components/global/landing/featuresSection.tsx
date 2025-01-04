@@ -13,8 +13,8 @@ import Image from "next/image";
 
 export default function FeaturesSection() {
   return (
-    <div className="flex md:flex-row flex-col w-[70vw] my-[200px] mx-auto justify-center items-center gap-y-10 md:gap-y-0 md:gap-x-10 ">
-      <Card className="h-[800px] items-center flex justify-center md:basis-1/3">
+    <div className="flex xl:flex-row flex-col w-[80vw]  my-[200px] mx-auto justify-between items-center gap-y-10 xl:gap-y-0  ">
+      <Card className="min-h-[800px] items-center flex justify-center xl:w-[25vw] w-[85vw]">
         <CardContent>
           <div className=" flex flex-col items-center justify-center">
             <Image
@@ -37,7 +37,7 @@ export default function FeaturesSection() {
           </div>
         </CardContent>
       </Card>
-      <Card className="h-[800px] items-center flex justify-center basis-1/3">
+      <Card className="min-h-[800px] items-center flex justify-center xl:w-[25vw] w-[85vw] ">
         <CardContent>
           <div className=" flex flex-col items-center justify-center">
             <div className="relative flex h-[500px] w-full flex-col items-center justify-center">
@@ -45,14 +45,14 @@ export default function FeaturesSection() {
                 Quirk
               </span>
 
-              <OrbitingCircles>
+              <OrbitingCircles radius={120}>
                 <IconBrandAsana size={40} />
                 <IconBrandOpenai size={40} />
                 <IconBrandGithub size={40} />
                 <IconGitBranch size={40} />
                 <IconWebhook size={40} />
               </OrbitingCircles>
-              <OrbitingCircles radius={100} reverse speed={2}>
+              <OrbitingCircles radius={60} reverse speed={2}>
                 <IconBrandOpenai size={40} />
                 <IconBrandSlack size={40} />
                 <IconBrandTrello size={40} />
@@ -73,7 +73,7 @@ export default function FeaturesSection() {
           </div>
         </CardContent>
       </Card>
-      <Card className="h-[800px] items-center flex justify-center basis-1/3">
+      <Card className="min-h-[800px] items-center flex justify-center xl:w-[25vw] w-[85vw]">
         <CardContent>
           <div className=" flex flex-col items-center justify-center">
             <span className="dark:bg-neutral-900  bg-white rounded-xl items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
@@ -97,8 +97,3 @@ export default function FeaturesSection() {
     </div>
   );
 }
-
-// Say
-//           Goodbye to Switching Apps and Messy Processes
-//           Replace the Manual Process of Assigning Tasks and Posting
-//           Messages with a simple and easy to use Automation Tool"""
