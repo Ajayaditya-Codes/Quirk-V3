@@ -5,7 +5,7 @@ import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { eq } from "drizzle-orm";
-import { Suspense } from "react";
+import React, { JSX, Suspense } from "react";
 
 export const metadata = {
   title: "Connections | Quirk",
@@ -30,7 +30,7 @@ export const viewport = "width=device-width, initial-scale=1";
 const ConnectionCard = dynamic(
   () => import("@/components/global/connectionCard"),
   {
-    loading: () => <Skeleton className="w-full h-32 rounded-xl" />,
+    loading: () => <Skeleton className="h-32 w-full rounded-xl" />,
   }
 );
 
@@ -85,7 +85,7 @@ const fetchUserDetails = async (): Promise<User | null> => {
   }
 };
 
-const ConnectionsContent = async () => {
+const ConnectionsContent = async (): Promise<JSX.Element> => {
   const userDetails = await fetchUserDetails();
 
   if (!userDetails) {
@@ -124,19 +124,19 @@ const ConnectionsContent = async () => {
   );
 };
 
-export default function Connections() {
+const Connections = (): JSX.Element => {
   return (
-    <div className="w-full flex flex-col">
+    <div className="flex w-full flex-col">
       <Header route="Connections" />
       <main className="w-full p-[3vh]">
         <h1 className="text-2xl font-semibold">Connections</h1>
-        <div className="flex flex-col space-y-5 mt-5 w-full">
+        <div className="mt-5 flex w-full flex-col space-y-5">
           <Suspense
             fallback={
               <>
-                <Skeleton className="w-full h-32 rounded-xl" />
-                <Skeleton className="w-full h-32 rounded-xl" />
-                <Skeleton className="w-full h-32 rounded-xl" />
+                <Skeleton className="h-32 w-full rounded-xl" />
+                <Skeleton className="h-32 w-full rounded-xl" />
+                <Skeleton className="h-32 w-full rounded-xl" />
               </>
             }
           >
@@ -146,4 +146,6 @@ export default function Connections() {
       </main>
     </div>
   );
-}
+};
+
+export default Connections;

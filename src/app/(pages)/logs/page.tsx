@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { JSX, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { db } from "@/db/drizzle";
 import { Logs, Users } from "@/db/schema";
@@ -16,19 +16,20 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import Header from "@/components/global/header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Log, User } from "@/db/types";
+import { toaster } from "@/components/ui/toaster";
 
 export const metadata = {
-  title: "Workflow Logs | My App",
+  title: "Workflow Logs | Quirk",
   description:
     "View detailed logs for workflow activities, including timestamps, messages, and success indicators.",
   openGraph: {
-    title: "Workflow Logs | My App",
+    title: "Workflow Logs | Quirk",
     description:
       "View detailed logs for workflow activities, including timestamps, messages, and success indicators.",
   },
   twitter: {
     card: "summary",
-    title: "Workflow Logs | My App",
+    title: "Workflow Logs | Quirk",
     description:
       "View detailed logs for workflow activities, including timestamps, messages, and success indicators.",
   },
@@ -63,22 +64,30 @@ const fetchLogs = async (): Promise<Log[] | null> => {
       .where(inArray(Logs.WorkflowName, user[0].Workflows))
       .execute();
 
-    if (logs.length > 30) {
-      const excessLogs = logs.slice(30);
+    if (logs.length > 50) {
+      const excessLogs = logs.slice(50);
       for (const log of excessLogs) {
-        await db.delete(Logs).where(eq(Logs.createdAt, log.createdAt)).execute();
+        await db
+          .delete(Logs)
+          .where(eq(Logs.createdAt, log.createdAt))
+          .execute();
       }
     }
 
     return logs;
   } catch (error) {
+    toaster.create({
+      title: "Error fetching logs",
+      description: "An error occurred while fetching logs.",
+      type: "error",
+    });
     console.error("Error fetching logs:", error);
     return null;
   }
 };
 
-const TableSkeleton = () => (
-  <div className="w-full p-[3vh]">
+const TableSkeleton: React.FC = (): JSX.Element => (
+  <div className="w-full">
     <Table className="text-base">
       <TableHeader>
         <TableRow>
@@ -97,52 +106,58 @@ const TableSkeleton = () => (
   </div>
 );
 
-const TableContent = ({ logs }: { logs: Log[] | null }) => (
-  <TableBody>
-    {logs
-      ? logs
-          .reverse()
-          .map((log, idx) => (
-            <TableRow key={idx} className="hover:bg-transparent font-medium">
-              <TableCell>{log.createdAt.toLocaleTimeString()}</TableCell>
-              <TableCell>{log.WorkflowName}</TableCell>
-              <TableCell>{log.LogMessage}</TableCell>
-              <TableCell className="flex justify-end">
-                {log.Success ? (
-                  <div
-                    className="flex items-center space-x-2 rounded-xl p-1 px-2"
-                    aria-label="Succeeded"
-                  >
-                    <IconCircleCheck className="text-green-500" aria-hidden="true" />
-                    <p>Succeeded</p>
-                  </div>
-                ) : (
-                  <div
-                    className="flex items-center space-x-2 rounded-xl p-1 px-2"
-                    aria-label="Failed"
-                  >
-                    <IconExclamationCircle className="text-red-500" aria-hidden="true" />
-                    <p>Failed</p>
-                  </div>
-                )}
-              </TableCell>
-            </TableRow>
-          ))
-      : (
+const TableContent: React.FC = async () => {
+  const logs = await fetchLogs();
+
+  return (
+    <TableBody>
+      {logs ? (
+        logs.reverse().map((log, idx) => (
+          <TableRow key={idx} className="hover:bg-transparent font-medium">
+            <TableCell>{log.createdAt.toTimeString()}</TableCell>
+            <TableCell>{log.WorkflowName}</TableCell>
+            <TableCell>{log.LogMessage}</TableCell>
+            <TableCell className="flex justify-end">
+              {log.Success ? (
+                <div
+                  className="flex items-center space-x-2 rounded-xl p-1 px-2"
+                  aria-label="Succeeded"
+                >
+                  <IconCircleCheck
+                    className="text-green-500"
+                    aria-hidden="true"
+                  />
+                  <p>Succeeded</p>
+                </div>
+              ) : (
+                <div
+                  className="flex items-center space-x-2 rounded-xl p-1 px-2"
+                  aria-label="Failed"
+                >
+                  <IconExclamationCircle
+                    className="text-red-500"
+                    aria-hidden="true"
+                  />
+                  <p>Failed</p>
+                </div>
+              )}
+            </TableCell>
+          </TableRow>
+        ))
+      ) : (
         <TableRow>
           <TableCell colSpan={4} className="text-center text-gray-500">
             No logs available.
           </TableCell>
         </TableRow>
       )}
-  </TableBody>
-);
+    </TableBody>
+  );
+};
 
-export default async function Page() {
-  const logs = await fetchLogs();
-
+const Page: React.FC = () => {
   return (
-    <div className="w-full flex flex-col">
+    <div className="flex flex-col w-full">
       <Header route="Logs" />
       <main className="w-full p-[3vh]">
         <Suspense fallback={<TableSkeleton />}>
@@ -156,10 +171,12 @@ export default async function Page() {
                 <TableHead className="text-right">Success</TableHead>
               </TableRow>
             </TableHeader>
-            <TableContent logs={logs} />
+            <TableContent />
           </Table>
         </Suspense>
       </main>
     </div>
   );
-}
+};
+
+export default Page;

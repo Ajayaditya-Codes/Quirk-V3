@@ -118,7 +118,7 @@ export async function Greet() {
       </div>
 
       <div>
-        <h1>Quirk Inc. </h1>
+        <h1>Quirk V2 </h1>
         <h3 className="text-xl mb-5  font-semibold">
           {getGreeting()}, {userSession?.given_name || "User"}!
         </h3>

@@ -6,7 +6,7 @@ const Header: FC = () => {
   return (
     <SidebarHeader className="m-3 flex flex-row justify-start items-center">
       <Image
-        alt="Quirk Inc. Logo"
+        alt="Quirk V2 Logo"
         src="/logo.svg"
         width={50}
         height={50}
@@ -15,10 +15,10 @@ const Header: FC = () => {
       />
       <div className="flex flex-col justify-center items-start ml-3">
         <h1 className="font-semibold text-xl tracking-tighter leading-snug">
-          Quirk Inc.
+          Quirk V2
         </h1>
         <p className="leading-snug font-medium text-sm text-neutral-600 dark:text-neutral-400">
-          GitHub Workflows
+          GitHub Automata
         </p>
       </div>
     </SidebarHeader>
