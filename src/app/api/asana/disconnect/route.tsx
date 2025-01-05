@@ -4,7 +4,7 @@ import { Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function POST(): Promise<NextResponse> {
+export const POST = async (): Promise<NextResponse> => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
 
@@ -34,9 +34,7 @@ export async function POST(): Promise<NextResponse> {
       .execute();
 
     return NextResponse.json({ message: "Asana disconnected successfully." });
-  } catch (error) {
-    console.error("Error disconnecting Asana:", error);
-
+  } catch {
     return NextResponse.json(
       {
         error:
@@ -45,4 +43,4 @@ export async function POST(): Promise<NextResponse> {
       { status: 500 }
     );
   }
-}
+};

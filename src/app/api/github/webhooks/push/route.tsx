@@ -4,8 +4,9 @@ import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   const { repo, workflow, id } = await req.json();
+
   if (!id) {
     return NextResponse.json({ message: "User not found" }, { status: 401 });
   }
@@ -39,17 +40,15 @@ export async function POST(req: Request) {
     );
   }
 
-  const octokit = new Octokit({
-    auth: githubAccessToken,
-  });
-  const user = await octokit.request("GET /user", {});
-  const owner = user.data.login;
-
-  const slug = repo?.split("/").pop();
+  const octokit = new Octokit({ auth: githubAccessToken });
 
   try {
+    const user = await octokit.request("GET /user", {});
+    const owner = user.data.login;
+    const slug = repo.split("/").pop();
+
     const response = await octokit.request("POST /repos/{owner}/{repo}/hooks", {
-      owner: owner || "",
+      owner,
       repo: slug,
       name: "web",
       active: true,
@@ -69,10 +68,10 @@ export async function POST(req: Request) {
       data: response.data,
       hook_id: response.data.id,
     });
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("Error creating webhook:", error);
     return NextResponse.json(
-      { message: "Error creating webhook", error: error },
+      { message: "Error creating webhook", error: error.message },
       { status: 500 }
     );
   }

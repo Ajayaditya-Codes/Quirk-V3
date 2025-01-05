@@ -4,29 +4,30 @@ import { Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function POST(): Promise<NextResponse> {
-  const { getUser } = getKindeServerSession();
-  const userSession = await getUser();
-
-  if (!userSession?.id) {
-    return NextResponse.json(
-      { error: "Authentication required." },
-      { status: 401 }
-    );
-  }
-
-  const userId = userSession.id;
-  const user = await db
-    .select()
-    .from(Users)
-    .where(eq(Users.KindeID, userId))
-    .execute();
-
-  if (!user.length) {
-    return NextResponse.json({ error: "User not found." }, { status: 404 });
-  }
-
+export const POST = async (): Promise<NextResponse> => {
   try {
+    const { getUser } = getKindeServerSession();
+    const userSession = await getUser();
+
+    if (!userSession?.id) {
+      return NextResponse.json(
+        { error: "Authentication required." },
+        { status: 401 }
+      );
+    }
+
+    const userId = userSession.id;
+
+    const user = await db
+      .select()
+      .from(Users)
+      .where(eq(Users.KindeID, userId))
+      .execute();
+
+    if (!user.length) {
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
+    }
+
     await db
       .update(Users)
       .set({ GitHubAccessToken: null })
@@ -45,4 +46,4 @@ export async function POST(): Promise<NextResponse> {
       { status: 500 }
     );
   }
-}
+};

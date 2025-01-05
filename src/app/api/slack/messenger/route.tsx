@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   try {
     const { channel, text } = await req.json();
 
@@ -66,4 +66,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+};

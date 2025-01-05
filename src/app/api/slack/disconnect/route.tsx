@@ -9,11 +9,10 @@ interface SlackRevokeResponse {
   error?: string;
 }
 
-export async function POST(): Promise<NextResponse> {
+export const POST = async (): Promise<NextResponse> => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
 
-  // Check for valid session
   if (!userSession || !userSession.id) {
     return NextResponse.json(
       { error: "Authentication required. Please log in to continue." },
@@ -23,7 +22,6 @@ export async function POST(): Promise<NextResponse> {
 
   const userId = userSession.id;
 
-  // Fetch only necessary fields from the database (SlackAccessToken)
   const user = await db
     .select({ SlackAccessToken: Users.SlackAccessToken })
     .from(Users)
@@ -41,7 +39,10 @@ export async function POST(): Promise<NextResponse> {
 
   if (!slackAccessToken) {
     return NextResponse.json(
-      { error: "Slack access token not found. Please connect your Slack account to proceed." },
+      {
+        error:
+          "Slack access token not found. Please connect your Slack account to proceed.",
+      },
       { status: 404 }
     );
   }
@@ -49,7 +50,6 @@ export async function POST(): Promise<NextResponse> {
   const slackRevokeURL = "https://slack.com/api/auth.revoke";
 
   try {
-    // Revoke the Slack access token by calling Slack's API
     const response = await fetch(slackRevokeURL, {
       method: "POST",
       headers: {
@@ -61,7 +61,6 @@ export async function POST(): Promise<NextResponse> {
     const data: SlackRevokeResponse = await response.json();
 
     if (!data.ok) {
-      // Log specific error from Slack response
       console.error("Slack API response error:", data.error);
       return NextResponse.json(
         { error: `Slack API error: ${data.error || "Unknown error"}` },
@@ -69,7 +68,6 @@ export async function POST(): Promise<NextResponse> {
       );
     }
 
-    // Update user in the database by setting SlackAccessToken to null
     await db
       .update(Users)
       .set({ SlackAccessToken: null })
@@ -78,19 +76,24 @@ export async function POST(): Promise<NextResponse> {
 
     return NextResponse.json({ message: "Slack access revoked successfully." });
   } catch (error: unknown) {
-    // Handle network or unexpected errors
     console.error("Error revoking Slack access token:", error);
 
     if (error instanceof Error && error.message.includes("network")) {
       return NextResponse.json(
-        { error: "Network error while communicating with Slack. Please try again later." },
+        {
+          error:
+            "Network error while communicating with Slack. Please try again later.",
+        },
         { status: 503 }
       );
     }
 
     return NextResponse.json(
-      { error: "An unexpected error occurred while revoking the Slack access token. Please try again later." },
+      {
+        error:
+          "An unexpected error occurred while revoking the Slack access token. Please try again later.",
+      },
       { status: 500 }
     );
   }
-}
+};

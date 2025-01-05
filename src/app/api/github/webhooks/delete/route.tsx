@@ -4,8 +4,9 @@ import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export async function DELETE(req: Request) {
+export async function DELETE(req: Request): Promise<NextResponse> {
   const { repo, hookId, id } = await req.json();
+
   if (!id) {
     return NextResponse.json({ message: "User not found" }, { status: 401 });
   }
@@ -42,12 +43,13 @@ export async function DELETE(req: Request) {
   const octokit = new Octokit({
     auth: githubAccessToken,
   });
-  const user = await octokit.request("GET /user", {});
-  const owner = user.data.login;
-
-  const slug = repo?.split("/").pop();
 
   try {
+    const user = await octokit.request("GET /user", {});
+    const owner = user.data.login;
+
+    const slug = repo.split("/").pop();
+
     await octokit.request("DELETE /repos/{owner}/{repo}/hooks/{hook_id}", {
       owner: owner || "",
       repo: slug,

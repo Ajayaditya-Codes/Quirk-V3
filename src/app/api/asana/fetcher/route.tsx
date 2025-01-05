@@ -4,15 +4,18 @@ import { Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-function validateEnvVariables(...vars: string[]): void {
+const validateEnvVariables = (...vars: string[]): void => {
   vars.forEach((variable) => {
     if (!process.env[variable]) {
       throw new Error(`Missing required environment variable: ${variable}`);
     }
   });
-}
+};
 
-async function fetchFromAsana(url: string, accessToken: string): Promise<any> {
+const fetchFromAsana = async (
+  url: string,
+  accessToken: string
+): Promise<any> => {
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -24,17 +27,17 @@ async function fetchFromAsana(url: string, accessToken: string): Promise<any> {
   }
 
   return response.json();
-}
+};
 
-async function fetchUserFromDatabase(userId: string) {
+const fetchUserFromDatabase = async (userId: string) => {
   return await db
     .select()
     .from(Users)
     .where(eq(Users.KindeID, userId))
     .execute();
-}
+};
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export const GET = async (req: NextRequest): Promise<NextResponse> => {
   try {
     const { getUser } = getKindeServerSession();
     const userSession = await getUser();
@@ -107,20 +110,20 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     const workspaces = userData.data.workspaces;
 
-    const workspaceProjectsPromises = workspaces.map(async (workspace: any) => {
-      const projectsUrl = `https://app.asana.com/api/1.0/workspaces/${workspace.gid}/projects`;
-      const projectsData = await fetchFromAsana(projectsUrl, accessToken);
+    const workspaceProjects = await Promise.all(
+      workspaces.map(async (workspace: any) => {
+        const projectsUrl = `https://app.asana.com/api/1.0/workspaces/${workspace.gid}/projects`;
+        const projectsData = await fetchFromAsana(projectsUrl, accessToken);
 
-      return {
-        workspace: {
-          id: workspace.gid,
-          name: workspace.name,
-        },
-        projects: projectsData.data,
-      };
-    });
-
-    const workspaceProjects = await Promise.all(workspaceProjectsPromises);
+        return {
+          workspace: {
+            id: workspace.gid,
+            name: workspace.name,
+          },
+          projects: projectsData.data,
+        };
+      })
+    );
 
     return NextResponse.json({
       message: "Successfully retrieved workspaces and projects.",
@@ -137,4 +140,4 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       { status: 500 }
     );
   }
-}
+};

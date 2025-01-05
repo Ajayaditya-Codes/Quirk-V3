@@ -4,7 +4,7 @@ import { Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
@@ -45,12 +45,14 @@ export async function GET(req: NextRequest) {
 
     if (!data.ok) {
       console.error("Slack OAuth Error:", data.error);
-      return NextResponse.json({ error: `Slack OAuth Error: ${data.error}` }, { status: 400 });
+      return NextResponse.json(
+        { error: `Slack OAuth Error: ${data.error}` },
+        { status: 400 }
+      );
     }
 
     await updateSlackAccessToken(data.authed_user.access_token);
 
-    // Redirect to the connections page after successful token update
     return NextResponse.redirect("https://localhost:3000/connections");
   } catch (error) {
     console.error("Error fetching Slack access token:", error);
@@ -59,12 +61,12 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+};
 
-async function updateSlackAccessToken(slackAccessToken: string) {
+const updateSlackAccessToken = async (slackAccessToken: string) => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  
+
   if (!user || !user.id) {
     throw new Error("User session not found");
   }
@@ -72,16 +74,13 @@ async function updateSlackAccessToken(slackAccessToken: string) {
   const userId = user.id;
 
   try {
-    // Update the user's Slack access token in the database
     await db
       .update(Users)
-      .set({
-        SlackAccessToken: slackAccessToken,
-      })
+      .set({ SlackAccessToken: slackAccessToken })
       .where(eq(Users.KindeID, userId))
       .execute();
   } catch (error) {
     console.error("Error updating Slack access token:", error);
     throw new Error("Failed to update Slack access token in the database");
   }
-}
+};

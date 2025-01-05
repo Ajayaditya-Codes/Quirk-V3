@@ -3,12 +3,13 @@ import { Logs, Users, Workflows } from "@/db/schema";
 import { eq, arrayContains } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const body = await req.json();
   const GitHubData = {
     repoName: body.repository.full_name,
     listenerType: "issues",
   };
+
   if (!body.issue && body?.hook?.events?.includes("push")) {
     GitHubData.listenerType = "push";
   }
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     if (workflow.length === 0) {
       await db.insert(Logs).values({
-        LogMessage: "No Workflow Found for Webhook Recieved",
+        LogMessage: "No Workflow Found for Webhook Received",
         WorkflowName: "No Workflow Found",
         Success: false,
       });
@@ -32,10 +33,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!workflow[0].Published) return;
+    if (!workflow[0].Published) {
+      return NextResponse.json(
+        { message: "Workflow Not Published" },
+        { status: 403 }
+      );
+    }
 
     await db.insert(Logs).values({
-      LogMessage: `Github Webhook Recieved for Workflow ${workflow[0].WorkflowName}`,
+      LogMessage: `GitHub Webhook Received for Workflow ${workflow[0].WorkflowName}`,
       WorkflowName: workflow[0].WorkflowName,
       Success: true,
     });
@@ -48,7 +54,7 @@ export async function POST(req: NextRequest) {
 
     if (user.length === 0) {
       await db.insert(Logs).values({
-        LogMessage: `No User Found for Worklfow ${workflow[0].WorkflowName}`,
+        LogMessage: `No User Found for Workflow ${workflow[0].WorkflowName}`,
         WorkflowName: "No User Found",
         Success: false,
       });
@@ -76,6 +82,7 @@ export async function POST(req: NextRequest) {
         })
         .execute();
     }
+
     const slackAccessToken = user[0].SlackAccessToken;
     const asanaRefreshToken = user[0].AsanaRefreshToken;
 
@@ -117,6 +124,7 @@ export async function POST(req: NextRequest) {
     for (const edge of edges.filter((edge) => edge.source === "github-1")) {
       let childNode = nodes.filter((node) => node.id === edge.target)[0];
       let skip = false;
+
       if (edge.target.startsWith("condition")) {
         let trace = edge;
         while (trace.target.startsWith("condition")) {
@@ -131,7 +139,9 @@ export async function POST(req: NextRequest) {
         }
         childNode = nodes.filter((node) => node.id === trace.target)[0];
       }
+
       if (skip) continue;
+
       if (childNode.id.startsWith("asana")) {
         AsanaHandler(
           asanaRefreshToken,
@@ -155,18 +165,19 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+
   return NextResponse.json(
     { message: "Webhook Triggered Successfully" },
     { status: 200 }
   );
-}
+};
 
 const SlackHandler = async (
   SlackAccessToken: string | null,
   data: any,
   WorkflowName: string,
   payload: any
-) => {
+): Promise<void> => {
   if (!SlackAccessToken || !data?.channel || !data?.message) {
     await db
       .insert(Logs)
@@ -178,10 +189,12 @@ const SlackHandler = async (
       .execute();
     return;
   }
+
   const text =
     data?.message === "c7awKoAvbe"
       ? geminiHandler(payload)
       : preprocessMessage(data?.message as string, payload);
+
   try {
     const response = await fetch(
       "https://quirk-v1.vercel.app/api/slack/messenger",
@@ -234,7 +247,7 @@ const AsanaHandler = async (
   data: any,
   WorkflowName: string,
   payload: any
-) => {
+): Promise<void> => {
   if (
     !AsanaRefreshToken ||
     !data?.project?.id ||
@@ -251,11 +264,13 @@ const AsanaHandler = async (
       .execute();
     return;
   }
+
   const taskName = preprocessMessage(data?.taskName, payload);
   const taskNotes =
     data?.taskNotes === "c7awKoAvbe"
       ? geminiHandler(payload)
       : preprocessMessage(data?.taskNotes, payload);
+
   try {
     const response = await fetch(
       "https://quirk-v1.vercel.app/api/asana/create-task",
@@ -323,6 +338,7 @@ function getNestedValue(obj: any, path: string): any {
 
     result = result[part];
   }
+
   return result;
 }
 
@@ -338,7 +354,7 @@ function checker(
   variable: string,
   condition: string,
   checkValue: string
-) {
+): boolean {
   const value = getNestedValue(payload, variable);
 
   try {
@@ -369,7 +385,6 @@ function checker(
         const val_2: string = value + "";
         if (!val_2.includes(checkValue as string)) return true;
         break;
-
       default:
         return false;
     }
@@ -380,7 +395,7 @@ function checker(
   }
 }
 
-async function geminiHandler(payload: any) {
+async function geminiHandler(payload: any): Promise<string> {
   const { GoogleGenerativeAI } = require("@google/generative-ai");
 
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -393,7 +408,7 @@ async function geminiHandler(payload: any) {
 
     const result = await model.generateContent(prompt);
     return result.response.text();
-  } catch (err: unknown) {
+  } catch (err) {
     return "Error in Gemini Handler";
   }
 }

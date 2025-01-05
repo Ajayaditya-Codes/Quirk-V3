@@ -10,7 +10,7 @@ interface TokenResponse {
   error?: string;
 }
 
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest): Promise<NextResponse> => {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
@@ -34,12 +34,9 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Request for the access token
     const response = await fetch(tokenUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         grant_type: "authorization_code",
         client_id: clientId,
@@ -58,21 +55,19 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Update the user's Asana access token
     await updateAsanaAccessToken(data.refresh_token);
-
-    // Redirect the user after successful token exchange
     return NextResponse.redirect("https://localhost:3000/connections");
   } catch (error) {
-    console.error("Error during token exchange:", error);
     return NextResponse.json(
       { error: "Token exchange failed" },
       { status: 500 }
     );
   }
-}
+};
 
-async function updateAsanaAccessToken(asanaRefreshToken: string): Promise<void> {
+const updateAsanaAccessToken = async (
+  asanaRefreshToken: string
+): Promise<void> => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   const userId = user?.id;
@@ -82,14 +77,12 @@ async function updateAsanaAccessToken(asanaRefreshToken: string): Promise<void> 
   }
 
   try {
-    // Update the Asana refresh token in the database
     await db
       .update(Users)
       .set({ AsanaRefreshToken: asanaRefreshToken })
       .where(eq(Users.KindeID, userId))
       .execute();
-  } catch (error) {
-    console.error("Error updating Asana access token:", error);
+  } catch {
     throw new Error("Failed to update Asana access token");
   }
-}
+};

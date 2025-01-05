@@ -8,7 +8,7 @@ const client = jwksClient({
   jwksUri: `${process.env.KINDE_ISSUER_URL}/.well-known/jwks.json`,
 });
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   try {
     const token = await req.text();
     const decodedToken = jwt.decode(token, { complete: true });
@@ -67,4 +67,4 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ status: 200, statusText: "success" });
-}
+};

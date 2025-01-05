@@ -4,81 +4,81 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const code = searchParams.get("code");
-
-  if (!code) {
-    return NextResponse.json(
-      { error: "Authorization code missing" },
-      { status: 400 }
-    );
-  }
-
+const fetchGitHubAccessToken = async (code: string): Promise<string> => {
   const githubTokenURL = "https://github.com/login/oauth/access_token";
-  const client_id = process.env.GITHUB_CLIENT_ID;
-  const client_secret = process.env.GITHUB_CLIENT_SECRET;
+  const clientId = process.env.GITHUB_CLIENT_ID;
+  const clientSecret = process.env.GITHUB_CLIENT_SECRET;
 
-  if (!client_id || !client_secret) {
-    return NextResponse.json(
-      { error: "GitHub client credentials are not set" },
-      { status: 500 }
-    );
+  if (!clientId || !clientSecret) {
+    throw new Error("GitHub client credentials are not set");
   }
 
+  const response = await fetch(githubTokenURL, {
+    method: "POST",
+    headers: { Accept: "application/json" },
+    body: new URLSearchParams({
+      code,
+      client_id: clientId,
+      client_secret: clientSecret,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`GitHub token API error: ${response.status}`);
+  }
+
+  const { access_token } = await response.json();
+
+  if (!access_token) {
+    throw new Error("Failed to retrieve GitHub access token");
+  }
+
+  return access_token;
+};
+
+const updateGitHubAccessToken = async (
+  githubAccessToken: string
+): Promise<void> => {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  const userId = user.id;
+
+  await db
+    .update(Users)
+    .set({ GitHubAccessToken: githubAccessToken })
+    .where(eq(Users.KindeID, userId))
+    .execute();
+};
+
+export const GET = async (req: NextRequest): Promise<NextResponse> => {
   try {
-    const response = await fetch(githubTokenURL, {
-      method: "POST",
-      headers: { Accept: "application/json" },
-      body: new URLSearchParams({
-        code,
-        client_id,
-        client_secret,
-      }),
-    });
+    const { searchParams } = new URL(req.url);
+    const code = searchParams.get("code");
 
-    if (!response.ok) {
-      throw new Error(`GitHub token API error: ${response.status}`);
-    }
-
-    const { access_token } = await response.json();
-
-    if (!access_token) {
+    if (!code) {
       return NextResponse.json(
-        { error: "Failed to retrieve GitHub access token" },
+        { error: "Authorization code missing" },
         { status: 400 }
       );
     }
 
-    await updateGithubAccessToken(access_token);
+    const accessToken = await fetchGitHubAccessToken(code);
+    await updateGitHubAccessToken(accessToken);
 
     return NextResponse.redirect("https://localhost:3000/connections");
   } catch (error) {
-    console.error("Error fetching GitHub access token:", error);
+    console.error("Error during GitHub authentication flow:", error);
     return NextResponse.json(
-      { error: "Failed to fetch GitHub access token" },
+      {
+        error: "Failed to complete GitHub authentication flow",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
-}
-
-async function updateGithubAccessToken(githubAccessToken: string) {
-  try {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-    const userId = user?.id;
-
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
-
-    await db
-      .update(Users)
-      .set({ GitHubAccessToken: githubAccessToken })
-      .where(eq(Users.KindeID, userId))
-      .execute();
-  } catch (error) {
-    console.error("Error updating GitHub access token:", error);
-    throw new Error("Failed to update GitHub access token");
-  }
-}
+};

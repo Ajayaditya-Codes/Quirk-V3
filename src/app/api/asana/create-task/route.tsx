@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
 
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-
   const userId = user?.id;
+
   if (!userId) {
     return NextResponse.json(
       { error: "User not authenticated" },
@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
   }
 
   const asanaRefreshToken = userRecord[0].AsanaRefreshToken;
-
   const tokenUrl = "https://app.asana.com/-/oauth_token";
   const clientId = process.env.ASANA_CLIENT_ID;
   const clientSecret = process.env.ASANA_CLIENT_SECRET;
@@ -56,15 +55,13 @@ export async function POST(req: NextRequest) {
   try {
     const tokenResponse = await fetch(tokenUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         grant_type: "refresh_token",
-        client_id: clientId as string,
-        client_secret: clientSecret as string,
+        client_id: clientId,
+        client_secret: clientSecret,
         refresh_token: asanaRefreshToken,
-        redirect_uri: redirectUri as string,
+        redirect_uri: redirectUri,
       }),
     });
 
@@ -80,8 +77,8 @@ export async function POST(req: NextRequest) {
     const client = Asana.ApiClient.instance;
     const token = client.authentications["token"];
     token.accessToken = tokenData.access_token;
-    const tasksApiInstance = new Asana.TasksApi();
 
+    const tasksApiInstance = new Asana.TasksApi();
     const body = {
       data: {
         name: taskName,
@@ -102,17 +99,12 @@ export async function POST(req: NextRequest) {
         data: result?.data,
       });
     } catch (error: any) {
-      console.error("Failed to create task:", error?.response?.body);
       return NextResponse.json(
-        {
-          message: "Failed to create task",
-          error: error?.response?.body,
-        },
+        { message: "Failed to create task", error: error?.response?.body },
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.error("Error fetching data:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to retrieve data" },
       { status: 500 }
