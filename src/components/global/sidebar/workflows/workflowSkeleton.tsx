@@ -1,3 +1,4 @@
+import React, { JSX } from "react";
 import {
   SidebarGroup,
   SidebarGroupAction,
@@ -7,8 +8,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus } from "lucide-react";
 
-export default function WorkflowSkeleton() {
-  // Generate placeholder skeletons dynamically for better scalability
+const WorkflowSkeleton: React.FC = (): JSX.Element => {
   const skeletonItems = Array.from({ length: 3 }).map((_, index) => (
     <Skeleton
       key={`workflow-skeleton-${index}`}
@@ -38,4 +38,6 @@ export default function WorkflowSkeleton() {
       </SidebarGroupContent>
     </SidebarGroup>
   );
-}
+};
+
+export default WorkflowSkeleton;

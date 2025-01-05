@@ -79,7 +79,7 @@ const ConnectionCard: React.FC<Props> = ({
   };
 
   return (
-    <Card className="flex justify-between items-end w-full bg-transparent border shadow-lg dark:shadow-gray-800">
+    <Card className="flex justify-between items-end w-full bg-transparent border shadow-lg ">
       <CardHeader className="flex flex-col space-4">
         <div className="flex space-2">{icon}</div>
         <div>

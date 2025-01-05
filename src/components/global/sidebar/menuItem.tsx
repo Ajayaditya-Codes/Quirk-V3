@@ -1,6 +1,6 @@
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { FC, ReactNode } from "react";
+import React, { FC, ReactNode } from "react";
 
 interface MenuItemProps {
   item: string;
@@ -12,8 +12,13 @@ const MenuItem: FC<MenuItemProps> = ({ item, icon }) => {
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild className="text-base">
-        <Link href={itemPath} prefetch={true} aria-label={`${item} page`}>
+      <SidebarMenuButton asChild>
+        <Link
+          href={itemPath}
+          prefetch={true}
+          aria-label={`Navigate to ${item} page`}
+          className="flex items-center text-base"
+        >
           <span className="w-6">{icon}</span>
           <span className="ml-2">{item}</span>
         </Link>

@@ -99,7 +99,7 @@ const Analytics: React.FC<{ logs: Log[] }> = ({ logs }) => {
   }, [logs]);
 
   return (
-    <Card className="shadow-lg dark:shadow-gray-800">
+    <Card className="shadow-lg ">
       <CardHeader>
         <CardTitle>Workflow Analytics</CardTitle>
         <CardDescription>Automate Your Github with Ease</CardDescription>

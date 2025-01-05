@@ -32,7 +32,7 @@ const WorkflowCard: React.FC<Props> = ({ name }): JSX.Element => {
   return (
     <Link href={`/editor/${name}`} prefetch={true}>
       <Card
-        className="flex w-full items-end space-x-2 border shadow-lg dark:shadow-gray-800"
+        className="flex w-full items-end space-x-2 border shadow-lg "
         aria-label={`Edit workflow: ${name}`}
       >
         <CardHeader className="flex flex-grow flex-col space-4">

@@ -1,6 +1,6 @@
 import { SidebarHeader } from "@/components/ui/sidebar";
 import Image from "next/image";
-import { FC } from "react";
+import React, { FC } from "react";
 
 const Header: FC = () => {
   return (

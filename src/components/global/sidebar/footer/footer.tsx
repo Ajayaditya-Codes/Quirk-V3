@@ -49,7 +49,7 @@ const Footer: React.FC = async (): Promise<JSX.Element> => {
 
   return (
     <Suspense fallback={<FooterSkeleton />}>
-      <SidebarFooter className="m-3 p-3 shadow-lg dark:shadow-gray-800 bg-white dark:bg-neutral-800 rounded-xl flex flex-row items-start">
+      <SidebarFooter className="m-3 p-3 shadow-lg bg-white dark:bg-neutral-800 rounded-xl flex flex-row items-start">
         {userDetails?.picture ? (
           <Image
             alt={`${userDetails.given_name}'s profile picture`}
