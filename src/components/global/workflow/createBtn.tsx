@@ -1,15 +1,18 @@
 "use client";
 
-import * as React from "react";
+import React, { FC, JSX } from "react";
 import { Plus } from "lucide-react";
 import { generate } from "random-words";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
-const CreateBtn: React.FC = () => {
+const CreateBtn: FC = (): JSX.Element => {
   const router = useRouter();
 
-  const handler = async () => {
+  const joinWords = (words: string[]): string =>
+    words.map((word) => word[0].toUpperCase() + word.slice(1)).join("-");
+
+  const handler = async (): Promise<void> => {
     const workflowName = joinWords(generate({ exactly: 3 }) as string[]);
 
     const promise = new Promise<string>(async (resolve, reject) => {
@@ -23,13 +26,15 @@ const CreateBtn: React.FC = () => {
         });
 
         if (response.ok) {
-          resolve(workflowName); // Success case
+          resolve(workflowName);
         } else {
           const errorData = await response.json();
           reject(new Error(errorData.error || "Workflow creation failed"));
         }
-      } catch (error) {
-        reject(new Error("Network error occurred while creating workflow."));
+      } catch {
+        reject(
+          new Error("Network error occurred while creating the workflow.")
+        );
       }
     });
 
@@ -38,7 +43,7 @@ const CreateBtn: React.FC = () => {
         title: "Workflow Created!",
         description: `Workflow "${workflowName}" was created successfully.`,
       },
-      error: (error) => ({
+      error: (error: Error) => ({
         title: "Workflow Creation Failed",
         description: error.message || "An unexpected error occurred.",
       }),
@@ -50,16 +55,10 @@ const CreateBtn: React.FC = () => {
 
     try {
       await promise;
-      router.refresh(); // Refresh the page after a successful workflow creation
+      router.refresh();
     } catch (error) {
-      console.error("Error during workflow creation:", error);
+      console.error(error);
     }
-  };
-
-  const joinWords = (words: string[]): string => {
-    return words
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join("-");
   };
 
   return (
@@ -67,6 +66,7 @@ const CreateBtn: React.FC = () => {
       onClick={handler}
       className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
       aria-label="Create Workflow"
+      role="button"
     >
       <Plus size={15} />
     </span>

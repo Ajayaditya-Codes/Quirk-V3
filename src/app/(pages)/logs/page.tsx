@@ -75,10 +75,10 @@ const fetchLogs = async (): Promise<Log[] | null> => {
     }
 
     return logs;
-  } catch (error) {
+  } catch (error: any) {
     toaster.create({
       title: "Error fetching logs",
-      description: "An error occurred while fetching logs.",
+      description: error?.message || "Something went wrong.",
       type: "error",
     });
     console.error("Error fetching logs:", error);
@@ -108,10 +108,9 @@ const TableSkeleton: React.FC = (): JSX.Element => (
 
 const TableContent: React.FC = async () => {
   const logs = await fetchLogs();
-
   return (
     <TableBody>
-      {logs ? (
+      {logs?.length !== 0 && logs ? (
         logs.reverse().map((log, idx) => (
           <TableRow key={idx} className="hover:bg-transparent font-medium">
             <TableCell>{log.createdAt.toTimeString()}</TableCell>

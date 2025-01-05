@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
         WorkflowName: "No Workflow Found",
         Success: false,
       });
-      console.log("he");
       return NextResponse.json(
         { message: "No Workflow Found" },
         { status: 404 }
@@ -53,7 +52,6 @@ export async function POST(req: NextRequest) {
         WorkflowName: "No User Found",
         Success: false,
       });
-      console.log("she");
       return NextResponse.json({ message: "No User Found" }, { status: 404 });
     }
 

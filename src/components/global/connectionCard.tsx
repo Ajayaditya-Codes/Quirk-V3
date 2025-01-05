@@ -72,7 +72,7 @@ const ConnectionCard: React.FC<Props> = ({
       await promise;
       router.refresh();
     } catch (error) {
-      console.error("Error during disconnection:", error);
+      console.error("Error during disconnection: ", error);
     } finally {
       setLoading(false);
     }

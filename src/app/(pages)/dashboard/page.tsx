@@ -1,6 +1,7 @@
-import { Analytics } from "@/components/global/analytics";
+import Analytics from "@/components/global/analytics";
 import Header from "@/components/global/header";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toaster } from "@/components/ui/toaster";
 import { db } from "@/db/drizzle";
 import { Logs, Users } from "@/db/schema";
 import { Log } from "@/db/types";
@@ -14,13 +15,13 @@ export const metadata = {
   title: "Dashboard | Quirk",
   description: "Automate Your GitHub Workflow with Quirk",
   openGraph: {
-    title: "dashboard | Quirk",
+    title: "Dashboard | Quirk",
     description: "Automate Your GitHub Workflow with Quirk",
-    url: "https://quirk.com/dashboard",
+    url: "https://quirk-v2.vercel.app/dashboard",
   },
   twitter: {
     card: "summary",
-    title: "dashboard | Quirk",
+    title: "Dashboard | Quirk",
     description: "Automate Your GitHub Workflow with Quirk",
   },
 };
@@ -40,9 +41,7 @@ const fetchUserDetails = async (): Promise<User | null> => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
 
-  if (!userSession?.id) {
-    return null;
-  }
+  if (!userSession?.id) return null;
 
   try {
     const result = await db
@@ -52,7 +51,12 @@ const fetchUserDetails = async (): Promise<User | null> => {
       .execute();
 
     return result?.length ? (result[0] as User) : null;
-  } catch (error) {
+  } catch (error: any) {
+    toaster.create({
+      title: "Error fetching user details",
+      description: error?.message || "Something went wrong.",
+      type: "error",
+    });
     console.error("Error fetching user details:", error);
     return null;
   }
@@ -62,9 +66,7 @@ const fetchLogs = async (): Promise<Log[] | null> => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
 
-  if (!userSession?.id) {
-    return null;
-  }
+  if (!userSession?.id) return null;
 
   try {
     const user = await db
@@ -80,54 +82,49 @@ const fetchLogs = async (): Promise<Log[] | null> => {
       .execute();
 
     return logs;
-  } catch (error) {
+  } catch (error: any) {
+    toaster.create({
+      title: "Error fetching user logs",
+      description: error?.message || "Something went wrong.",
+      type: "error",
+    });
     console.error("Error fetching logs:", error);
     return null;
   }
 };
 
-export async function Greet() {
+export const Greet = async () => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
 
-  function getGreeting() {
-    const now = new Date();
-    const hour = now.getHours();
-
-    if (hour >= 5 && hour < 12) {
-      return "Good Morning";
-    } else if (hour >= 12 && hour < 18) {
-      return "Good Afternoon";
-    } else if (hour >= 18 && hour < 22) {
-      return "Good Evening";
-    } else {
-      return "Hope you're having a great night,";
-    }
-  }
+  const getGreeting = (): string => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "Good Morning";
+    if (hour >= 12 && hour < 18) return "Good Afternoon";
+    if (hour >= 18 && hour < 22) return "Good Evening";
+    return "Hope you're having a great night";
+  };
 
   return (
     <div className="flex flex-row space-x-3 mb-5">
+      <Image
+        src="/logo.svg"
+        alt="logo"
+        width={64}
+        height={64}
+        className="rounded-2xl"
+      />
       <div>
-        <Image
-          src={"/logo.svg"}
-          alt="logo"
-          width={64}
-          height={64}
-          className="rounded-2xl"
-        />
-      </div>
-
-      <div>
-        <h1>Quirk V2 </h1>
-        <h3 className="text-xl mb-5  font-semibold">
+        <h3 className="font-medium">Quirk V2</h3>
+        <h3 className="text-xl mb-5 font-semibold">
           {getGreeting()}, {userSession?.given_name || "User"}!
         </h3>
       </div>
     </div>
   );
-}
+};
 
-const WorkflowContent = async () => {
+const WorkflowContent: React.FC = async () => {
   const userDetails = await fetchUserDetails();
 
   if (!userDetails) {
@@ -138,20 +135,21 @@ const WorkflowContent = async () => {
 
   return (
     <>
-      {userDetails?.Workflows &&
-        userDetails.Workflows.map((workflow) => (
-          <WorkflowCard key={workflow} name={workflow} />
-        ))}
+      {userDetails.Workflows.map((workflow) => (
+        <WorkflowCard key={workflow} name={workflow} />
+      ))}
     </>
   );
 };
 
-const Chart = async () => {
+const Chart: React.FC = async () => {
   const logs = await fetchLogs();
+
   if (!logs) {
     return <p className="text-center text-gray-500">No logs available.</p>;
   }
-  return <Analytics logs={logs || []} />;
+
+  return <Analytics logs={logs} />;
 };
 
 export default function Dashboard() {
@@ -161,7 +159,7 @@ export default function Dashboard() {
       <div className="w-full p-[3vh]">
         <Greet />
         <Suspense
-          fallback={<Skeleton className="w-full h-[200px] rounded-xl" />}
+          fallback={<Skeleton className="w-full h-[400px] rounded-xl" />}
         >
           <Chart />
         </Suspense>

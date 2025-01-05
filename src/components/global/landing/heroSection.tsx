@@ -16,6 +16,7 @@ export default function HeroSection() {
       <div className="flex flex-row gap-x-5 mt-5 items-center justify-center">
         <Link
           href="/pricing"
+          prefetch={true}
           className="text-sm sm:text-base md:text-lg hover:underline flex flex-row items-center justify-center gap-x-1"
         >
           Pricing and Plans <MoveUpRightIcon size={15} />

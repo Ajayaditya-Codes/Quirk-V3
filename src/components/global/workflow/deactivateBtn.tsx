@@ -1,17 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { FC, JSX } from "react";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
 interface DeactivateBtnProps {
-  workflowName: string; // Changed String to string for proper TypeScript usage
+  workflowName: string;
 }
 
-const DeactivateBtn: React.FC<DeactivateBtnProps> = ({ workflowName }) => {
+const DeactivateBtn: FC<DeactivateBtnProps> = ({
+  workflowName,
+}): JSX.Element => {
   const router = useRouter();
 
-  const handler = async () => {
+  const handler = async (): Promise<void> => {
     const promise = new Promise<void>(async (resolve, reject) => {
       try {
         const response = await fetch("/api/workflow/deactivate", {
@@ -23,12 +25,12 @@ const DeactivateBtn: React.FC<DeactivateBtnProps> = ({ workflowName }) => {
         });
 
         if (response.ok) {
-          resolve(); // Success case
+          resolve();
         } else {
           const errorData = await response.json();
           reject(new Error(errorData.error || "Workflow deactivation failed"));
         }
-      } catch (error) {
+      } catch {
         reject(
           new Error("Network error occurred while deactivating workflow.")
         );
@@ -40,7 +42,7 @@ const DeactivateBtn: React.FC<DeactivateBtnProps> = ({ workflowName }) => {
         title: "Workflow Deactivated",
         description: `The workflow "${workflowName}" was successfully deactivated.`,
       },
-      error: (error) => ({
+      error: (error: Error) => ({
         title: "Deactivation Failed",
         description: error.message || "An unexpected error occurred.",
       }),
@@ -52,16 +54,16 @@ const DeactivateBtn: React.FC<DeactivateBtnProps> = ({ workflowName }) => {
 
     try {
       await promise;
-      router.refresh(); // Refresh the page upon successful deactivation
+      router.refresh();
     } catch (error) {
-      console.error("Error during workflow deactivation:", error);
+      console.error(error);
     }
   };
 
   return (
     <button
       onClick={handler}
-      className="text-sm font-medium"
+      className="font-medium text-sm"
       aria-label={`Deactivate ${workflowName}`}
     >
       Deactivate Workflow

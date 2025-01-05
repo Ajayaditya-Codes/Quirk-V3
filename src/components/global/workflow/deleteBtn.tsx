@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { FC, JSX } from "react";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
 interface DeleteBtnProps {
-  workflowName: string; // Replaced String with string for correct TypeScript usage
+  workflowName: string;
 }
 
-const DeleteBtn: React.FC<DeleteBtnProps> = ({ workflowName }) => {
+const DeleteBtn: FC<DeleteBtnProps> = ({ workflowName }): JSX.Element => {
   const router = useRouter();
 
-  const handler = async () => {
+  const handler = async (): Promise<void> => {
     const promise = new Promise<void>(async (resolve, reject) => {
       try {
         const response = await fetch("/api/workflow/delete", {
@@ -23,12 +23,12 @@ const DeleteBtn: React.FC<DeleteBtnProps> = ({ workflowName }) => {
         });
 
         if (response.ok) {
-          resolve(); // Success case
+          resolve();
         } else {
           const errorData = await response.json();
           reject(new Error(errorData.error || "Workflow deletion failed"));
         }
-      } catch (error) {
+      } catch {
         reject(new Error("Unexpected error occurred during deletion"));
       }
     });
@@ -38,11 +38,9 @@ const DeleteBtn: React.FC<DeleteBtnProps> = ({ workflowName }) => {
         title: "Workflow Deleted",
         description: `The workflow "${workflowName}" was successfully deleted.`,
       },
-      error: (error) => ({
+      error: (error: Error) => ({
         title: "Deletion Failed",
-        description:
-          error.message ||
-          "An unexpected error occurred while deleting the workflow.",
+        description: error.message || "An unexpected error occurred.",
       }),
       loading: {
         title: "Deleting Workflow...",
@@ -50,19 +48,18 @@ const DeleteBtn: React.FC<DeleteBtnProps> = ({ workflowName }) => {
       },
     });
 
-    // Handle post-toast logic
     try {
       await promise;
-      router.refresh(); // Refresh the page after successful deletion
+      router.refresh();
     } catch (error) {
-      console.error("Error during workflow deletion:", error);
+      console.error(error);
     }
   };
 
   return (
     <button
       onClick={handler}
-      className="text-red-600 text-sm font-medium"
+      className="text-red-600 font-medium text-sm"
       aria-label={`Delete ${workflowName}`}
     >
       Delete Workflow

@@ -6,6 +6,7 @@ import { Users } from "@/db/schema";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { eq } from "drizzle-orm";
 import React, { JSX, Suspense } from "react";
+import { toaster } from "@/components/ui/toaster";
 
 export const metadata = {
   title: "Connections | Quirk",
@@ -15,7 +16,7 @@ export const metadata = {
     title: "Connections | Quirk",
     description:
       "Manage and connect your accounts including GitHub, Slack, and Asana.",
-    url: "https://quirk.com/connections",
+    url: "https://quirk-v2.vercel.app/connections",
   },
   twitter: {
     card: "summary",
@@ -79,7 +80,12 @@ const fetchUserDetails = async (): Promise<User | null> => {
       .execute();
 
     return result?.length ? (result[0] as User) : null;
-  } catch (error) {
+  } catch (error: any) {
+    toaster.create({
+      title: "Error fetching user details",
+      description: error?.message || "Something went wrong.",
+      type: "error",
+    });
     console.error("Error fetching user details:", error);
     return null;
   }

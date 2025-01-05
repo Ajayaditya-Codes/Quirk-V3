@@ -9,7 +9,6 @@ import {
   startOfMonth,
   subMonths,
 } from "date-fns";
-
 import {
   Card,
   CardContent,
@@ -19,22 +18,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Log } from "@/db/types";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const generateRandomColor = () => {
-  const h = Math.floor(Math.random() * 360); // Hue
-  const s = Math.floor(Math.random() * 30) + 70; // Saturation (70-100%)
-  const l = Math.floor(Math.random() * 20) + 40; // Lightness (40-60%)
-  return `hsl(${h}, ${s}%, ${l}%)`;
+const generateRandomColor = (): string => {
+  return `hsl(${Math.floor(Math.random() * 360)}, ${Math.floor(
+    Math.random() * 30 + 70
+  )}%, ${Math.floor(Math.random() * 20 + 40)}%)`;
 };
 
-export function Analytics({ logs }: { logs: Log[] }) {
+const Analytics: React.FC<{ logs: Log[] }> = ({ logs }) => {
   const [chartData, setChartData] = useState<any[]>([]);
   const [chartConfig, setChartConfig] = useState<Record<string, any>>({});
 
@@ -62,7 +59,7 @@ export function Analytics({ logs }: { logs: Log[] }) {
       const earliestDate = startOfMonth(
         new Date(Math.min(...logs.map((log) => log.createdAt.getTime())))
       );
-      const startRange = subMonths(earliestDate, 5); // Start 5 months earlier
+      const startRange = subMonths(earliestDate, 5);
       const latestDate = startOfMonth(
         new Date(Math.max(...logs.map((log) => log.createdAt.getTime())))
       );
@@ -76,12 +73,9 @@ export function Analytics({ logs }: { logs: Log[] }) {
       }
     }
 
-    // Sort the chart data by chronological order
     const sortedChartData = Array.from(chartDataMap.entries())
       .sort(([a], [b]) => {
-        const dateA = new Date(`${a} 01`);
-        const dateB = new Date(`${b} 01`);
-        return dateA.getTime() - dateB.getTime();
+        return new Date(`${a} 01`).getTime() - new Date(`${b} 01`).getTime();
       })
       .map(([month, workflows]) => {
         const workflowCounts = Object.fromEntries(
@@ -102,25 +96,24 @@ export function Analytics({ logs }: { logs: Log[] }) {
 
     setChartData(sortedChartData);
     setChartConfig(newChartConfig);
-    console.log(sortedChartData);
-    console.log(newChartConfig);
   }, [logs]);
 
   return (
-    <Card>
+    <Card className="shadow-lg dark:shadow-gray-800">
       <CardHeader>
         <CardTitle>Workflow Analytics</CardTitle>
         <CardDescription>Automate Your Github with Ease</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[200px] w-full">
+        <ChartContainer
+          config={chartConfig}
+          className="h-[200px] w-full"
+          aria-label="Workflow analytics chart"
+        >
           <LineChart
             accessibilityLayer
             data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
+            margin={{ left: 12, right: 12 }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
@@ -133,7 +126,11 @@ export function Analytics({ logs }: { logs: Log[] }) {
                 return `${month.slice(0, 3)} '${year.slice(-2)}`;
               }}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent />}
+              aria-hidden="true"
+            />
             {Object.keys(chartConfig).map((key) => (
               <Line
                 key={key}
@@ -142,18 +139,21 @@ export function Analytics({ logs }: { logs: Log[] }) {
                 stroke={chartConfig[key].color}
                 strokeWidth={2}
                 dot={false}
+                aria-hidden="true"
               />
             ))}
           </LineChart>
         </ChartContainer>
       </CardContent>
       <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="flex items-center gap-2 leading-none text-muted-foreground">
+        <div className="flex w-full items-start space-2 text-sm">
+          <div className="flex items-center space-2 leading-none text-muted-foreground">
             Showing Actions on Every Workflow <TrendingUp className="h-4 w-4" />
           </div>
         </div>
       </CardFooter>
     </Card>
   );
-}
+};
+
+export default Analytics;
