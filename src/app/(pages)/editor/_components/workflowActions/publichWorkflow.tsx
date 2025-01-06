@@ -1,25 +1,21 @@
 "use client";
+
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
 import { IconBrowserShare } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import { useFlowStore } from "../constants/store/reactFlowStore";
 
-export default function PublishWorkflow() {
+const PublishWorkflow: React.FC = () => {
   const path = usePathname();
   const slug = path?.split("/").pop();
   const { nodes, edges } = useFlowStore();
 
   const handler = async (): Promise<void> => {
-    let githubData = nodes[0];
+    const githubData = nodes.find((node) => node.id === "github-1") || nodes[0];
 
-    for (const node of nodes) {
-      if (node.id === "github-1") {
-        githubData = node;
-      }
-    }
-
-    if (githubData.data.repoName === "") {
+    if (!githubData?.data?.repoName) {
       toaster.create({
         title: "Please Select a Repository Name",
         type: "error",
@@ -74,10 +70,12 @@ export default function PublishWorkflow() {
   return (
     <Button
       variant="outline"
-      className="h-10 w-10 justify-center items-center flex"
+      className="flex h-10 w-10 items-center justify-center"
       onClick={handler}
     >
       <IconBrowserShare size="50" />
     </Button>
   );
-}
+};
+
+export default PublishWorkflow;

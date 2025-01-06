@@ -55,7 +55,7 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
   );
   const [newValue, setValue] = useState<string>(value as string);
 
-  const handler = () => {
+  const handler = (): void => {
     setNodes(
       nodes.map((node) =>
         node.id === id
@@ -74,18 +74,13 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
 
-  const handleDeleteNode = () => {
-    const updatedNodes = nodes.filter((el: Node) => el.id !== id);
-    const updatedEdges = edges.filter(
-      (el: Edge) => el.source !== id && el.target !== id
-    );
-    setNodes(updatedNodes);
-    setEdges(updatedEdges);
+  const deleteNode = (): void => {
+    setNodes(nodes.filter((node) => node.id !== id));
+    setEdges(edges.filter((edge) => edge.source !== id && edge.target !== id));
   };
 
-  const handleDeleteEdge = () => {
-    const updatedEdges = edges.filter((el: Edge) => el.target !== id);
-    setEdges(updatedEdges);
+  const deleteEdge = (): void => {
+    setEdges(edges.filter((edge) => edge.target !== id));
   };
 
   return (
@@ -99,25 +94,25 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
                 type="target"
                 position={Position.Left}
                 style={{
-                  width: "12px",
-                  height: "12px",
-                  color: "#FF0083",
                   background: "#FF0083",
+                  color: "#FF0083",
+                  height: "12px",
+                  width: "12px",
                 }}
               />
               <Handle
                 type="source"
                 position={Position.Right}
                 style={{
-                  width: "12px",
-                  height: "12px",
-                  color: "#FF0083",
                   background: "#FF0083",
+                  color: "#FF0083",
+                  height: "12px",
+                  width: "12px",
                 }}
               />
             </DrawerTrigger>
             <DrawerContent className="my-[100px]">
-              <div className="w-[350px] mx-auto">
+              <div className="mx-auto w-[350px]">
                 <DrawerHeader>
                   <DrawerTitle className="text-center">
                     Conditional Node Actions
@@ -128,17 +123,17 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
                 </DrawerHeader>
                 <form className="space-y-4">
                   <div>
-                    <label className="block text-md font-medium ">
+                    <label className="block text-md font-medium">
                       Variable
                     </label>
                     <Select
                       value={newVariable}
                       onValueChange={(value) => setVariable(value)}
                     >
-                      <SelectTrigger className="w-full mt-1 p-2 border text-md rounded-md ">
+                      <SelectTrigger className="border mt-1 p-2 rounded-md text-md w-full">
                         <SelectValue placeholder="Select Variable" />
                       </SelectTrigger>
-                      <SelectContent className=" w-[350px]">
+                      <SelectContent className="w-[350px]">
                         {GithubVariables.map((variable) => (
                           <SelectItem key={variable} value={variable}>
                             {variable}
@@ -149,7 +144,7 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
                   </div>
 
                   <div>
-                    <label className="block text-md font-medium ">
+                    <label className="block text-md font-medium">
                       Condition
                     </label>
                     <Select
@@ -158,7 +153,7 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
                         setCondition(value as ConditionNodeData["condition"])
                       }
                     >
-                      <SelectTrigger className="w-full mt-1 p-2 border text-md rounded-md ">
+                      <SelectTrigger className="border mt-1 p-2 rounded-md text-md w-full">
                         <SelectValue placeholder="Select Condition" />
                       </SelectTrigger>
                       <SelectContent className="w-[350px]">
@@ -181,16 +176,16 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
                   </div>
 
                   <div>
-                    <label className="block text-md font-medium ">Value</label>
+                    <label className="block text-md font-medium">Value</label>
                     <Input
                       value={newValue}
                       onChange={(e) => setValue(e.target.value)}
-                      className="w-full p-2 border text-md rounded-md "
+                      className="border p-2 rounded-md text-md w-full"
                     />
                   </div>
                 </form>
 
-                <DrawerFooter className="flex flex-row space-x-3 mt-3 w-full items-center justify-center">
+                <DrawerFooter className="flex w-full flex-row items-center justify-center space-x-3 mt-3">
                   <DrawerClose>
                     <span
                       onClick={handler}
@@ -205,14 +200,14 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
                 </DrawerFooter>
               </div>
             </DrawerContent>
-          </Drawer>{" "}
+          </Drawer>
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem>
-            <span onClick={handleDeleteEdge}>Delete Source Edge</span>
+            <span onClick={deleteEdge}>Delete Source Edge</span>
           </ContextMenuItem>
           <ContextMenuItem>
-            <span onClick={handleDeleteNode}>Delete Node</span>
+            <span onClick={deleteNode}>Delete Node</span>
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
@@ -220,11 +215,11 @@ const ConditionNode: React.FC<ConditionNodeProps> = ({ id, data }) => {
   );
 };
 
-const Node = () => {
+const Node: React.FC = () => {
   return (
-    <span className="dark:bg-neutral-900 bg-white rounded-xl w-full items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
+    <span className="bg-white border border-[#FF0083] dark:bg-neutral-900 flex flex-row items-center p-5 rounded-xl space-x-5 w-full">
       <GitBranch />
-      <div className="flex flex-col justify-start items-start">
+      <div className="flex flex-col items-start justify-start">
         <h5 className="text-lg font-semibold">Condition</h5>
         <p className="text-gray-400">Control Trigger Flow</p>
       </div>

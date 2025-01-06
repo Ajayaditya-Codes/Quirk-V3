@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
+
+import React, { FC, ReactNode } from "react";
 import { IconLockAccess } from "@tabler/icons-react";
-import { FC, ReactNode } from "react";
 import { useFlowStore } from "../constants/store/reactFlowStore";
 import { toaster } from "@/components/ui/toaster";
 
@@ -21,11 +21,11 @@ const CreateNode: FC<CreateNodeProps> = ({
   const { slackHandler, asanaHandler, conditionHandler, gptHandler } =
     useFlowStore();
 
-  const handler = (name: string) => {
+  const handler = (name: string): void => {
     switch (name) {
       case "GitHub":
         toaster.create({
-          title: "Hooby Plan Supports only one Github Node",
+          title: "Hobby Plan supports only one GitHub Node.",
           type: "warning",
         });
         break;
@@ -40,7 +40,7 @@ const CreateNode: FC<CreateNodeProps> = ({
         break;
       case "Trello":
         toaster.create({
-          title: "Trello Coming Soon",
+          title: "Trello Coming Soon.",
           type: "warning",
         });
         break;
@@ -48,16 +48,21 @@ const CreateNode: FC<CreateNodeProps> = ({
         gptHandler();
         break;
       default:
+        toaster.create({
+          title: "Unknown Action.",
+          type: "error",
+        });
         break;
     }
   };
+
   return (
     <span
-      className="dark:bg-neutral-900 bg-white rounded-xl w-full items-center p-5 flex flex-row space-x-5 dark:border-white border-black border"
+      className="flex w-full items-center p-5 space-x-5 bg-white dark:bg-neutral-900 rounded-xl border border-black dark:border-white"
       onClick={() => handler(action)}
     >
       {icon}
-      <div className="flex flex-col justify-start items-start">
+      <div className="flex flex-col items-start justify-start">
         <h5 className="text-lg font-semibold">{action}</h5>
         <p className="text-gray-400">{actionDescription}</p>
       </div>

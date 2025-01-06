@@ -1,8 +1,8 @@
 "use client";
+import React, { JSX, useState } from "react";
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { useFlowStore } from "../store/reactFlowStore";
-import React, { useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -41,7 +41,7 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
     "issues" | "push" | null
   >(listenerType);
 
-  const handler = () => {
+  const handler = (): void => {
     setNodes(
       nodes.map((node) =>
         node.id === id
@@ -76,7 +76,7 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
           />
         </DrawerTrigger>
         <DrawerContent className="my-[100px]">
-          <div className="w-[350px] mx-auto">
+          <div className="mx-auto w-[350px]">
             <DrawerHeader>
               <DrawerTitle className="text-center">
                 GitHub Node Actions
@@ -87,12 +87,12 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
             </DrawerHeader>
             <form className="space-y-4">
               <div>
-                <label className="block  font-medium ">Select Repository</label>
+                <label className="block font-medium">Select Repository</label>
                 <Select
                   onValueChange={setSelectedRepo}
                   defaultValue={selectedRepo}
                 >
-                  <SelectTrigger className="w-full mt-1 p-2 border rounded-md ">
+                  <SelectTrigger className="mt-1 w-full rounded-md border p-2">
                     <SelectValue placeholder="Select repository" />
                   </SelectTrigger>
                   <SelectContent className="w-[350px]">
@@ -107,7 +107,7 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
               </div>
 
               <div>
-                <label className="block  font-medium ">
+                <label className="block font-medium">
                   Select Listener Type
                 </label>
                 <Select
@@ -116,7 +116,7 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
                   }
                   defaultValue={selectedListener || "issues"}
                 >
-                  <SelectTrigger className="w-full mt-1 p-2 border  rounded-md ">
+                  <SelectTrigger className="mt-1 w-full rounded-md border p-2">
                     <SelectValue placeholder="Select listener type" />
                   </SelectTrigger>
                   <SelectContent className="w-[350px]">
@@ -126,14 +126,14 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
                 </Select>
               </div>
             </form>
-            <DrawerFooter className="flex flex-row space-x-3 mt-3 w-full items-center justify-center">
+            <DrawerFooter className="mt-3 flex w-full flex-row items-center justify-center space-x-3">
               <DrawerClose>
-                <span onClick={handler} className="border p-2 px-3 rounded-lg">
+                <span onClick={handler} className="rounded-lg border p-2 px-3">
                   Submit
                 </span>
               </DrawerClose>
               <DrawerClose>
-                <span className="border p-2 px-3 rounded-lg">Cancel</span>
+                <span className="rounded-lg border p-2 px-3">Cancel</span>
               </DrawerClose>
             </DrawerFooter>
           </div>
@@ -143,11 +143,11 @@ const GitHubNode: React.FC<GitHubNodeProps> = ({ id, data }) => {
   );
 };
 
-const Node = () => {
+const Node: React.FC = (): JSX.Element => {
   return (
-    <span className="dark:bg-neutral-900 bg-white rounded-xl w-full items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
+    <span className="flex w-full flex-row items-center space-x-5 rounded-xl border border-[#FF0083] bg-white p-5 dark:bg-neutral-900">
       <IconBrandGithub />
-      <div className="flex flex-col justify-start items-start">
+      <div className="flex flex-col items-start justify-start">
         <h5 className="text-lg font-semibold">GitHub</h5>
         <p className="text-gray-400">Listen for GitHub Events</p>
       </div>

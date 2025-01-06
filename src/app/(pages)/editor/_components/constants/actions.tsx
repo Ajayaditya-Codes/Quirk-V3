@@ -16,7 +16,7 @@ type Action = {
   disabled?: boolean;
 };
 
-export const Actions: Action[] = [
+export const Actions: ReadonlyArray<Action> = [
   {
     name: "GitHub",
     icon: <IconBrandGithub />,
@@ -48,4 +48,4 @@ export const Actions: Action[] = [
     icon: <IconBrandOpenai />,
     description: "Generate Messages using GPT",
   },
-];
+] as const;

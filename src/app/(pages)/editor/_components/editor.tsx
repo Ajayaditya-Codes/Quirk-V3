@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, ReactElement } from "react";
 import { useTheme } from "next-themes";
 import {
   applyEdgeChanges,
@@ -19,7 +19,7 @@ import { useFlowStore } from "./constants/store/reactFlowStore";
 import { usePathname } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
-export default function Editor() {
+const Editor = (): ReactElement => {
   const path = usePathname();
   const slug = path?.split("/").pop();
 
@@ -38,7 +38,7 @@ export default function Editor() {
   } = useFlowStore();
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
+    (changes: NodeChange[]): void => {
       const updatedNodes = applyNodeChanges(changes, nodes);
       setNodes(updatedNodes);
     },
@@ -46,7 +46,7 @@ export default function Editor() {
   );
 
   const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => {
+    (changes: EdgeChange[]): void => {
       const updatedEdges = applyEdgeChanges(changes, edges);
       setEdges(updatedEdges);
     },
@@ -54,106 +54,88 @@ export default function Editor() {
   );
 
   const onConnect = useCallback(
-    (connection: Connection) => {
+    (connection: Connection): void => {
       addNewEdge(connection);
     },
     [addNewEdge]
   );
 
   useEffect(() => {
-    const fetchWorkflow = async () => {
+    const fetchWorkflow = async (): Promise<void> => {
       try {
         const response = await fetch(`/api/workflow/get?workflowName=${slug}`, {
           method: "GET",
           credentials: "include",
         });
+
         if (!response.ok) {
           const errorData = await response.json();
-          if (errorData.error === "User not found") {
-            toaster.create({
-              title: "Please log in and try again.",
-              type: "error",
-            });
-          } else if (
-            errorData.error === "Unauthorized to Access the Workflow"
-          ) {
-            toaster.create({
-              title: "You are not authorized to access this workflow.",
-              type: "error",
-            });
-          } else {
-            toaster.create({
-              title: "There was Some Error",
-              type: "error",
-            });
-          }
+          const errorMessage =
+            errorData.error === "User not found"
+              ? "Please log in and try again."
+              : errorData.error === "Unauthorized to Access the Workflow"
+              ? "You are not authorized to access this workflow."
+              : "There was some error.";
+          toaster.create({ title: errorMessage, type: "error" });
           return;
         }
+
         const data = await response.json();
         setNodes(data.Nodes);
         setEdges(data.Edges);
-      } catch (error: any) {
+      } catch {
         toaster.create({
-          title: "There was Some Error Fetching the Workflow",
+          title: "There was an error fetching the workflow.",
           type: "error",
         });
       }
     };
 
-    const fetchRepos = async () => {
+    const fetchRepos = async (): Promise<void> => {
       try {
         const response = await fetch("/api/github/fetcher");
-        const repos: string[] = [];
-
         if (!response.ok) throw new Error("Failed to fetch GitHub data");
+
         const data = await response.json();
-        repos.push(...data.map((repo: any) => repo.full_name));
+        const repos: string[] = data.map(
+          (repo: { full_name: string }) => repo.full_name
+        );
         setRepos(repos);
-      } catch (error) {
-        console.error(error);
+      } catch {
         toaster.create({ title: "Error fetching repositories", type: "error" });
       }
     };
 
-    const fetchChannels = async () => {
+    const fetchChannels = async (): Promise<void> => {
       try {
         const response = await fetch("/api/slack/fetcher");
-        const channels: string[] = [];
-
         if (!response.ok) throw new Error("Failed to fetch Slack data");
+
         const data = await response.json();
-        for (const channel of data.channels) {
-          channels.push(channel.name);
-        }
+        const channels = data.channels.map(
+          (channel: { name: string }) => channel.name
+        );
         setChannels(channels);
-      } catch (error: any) {
-        console.error(error);
-        toaster.create({
-          title: "There was Some Error fetching the Channels",
-          type: "error",
-        });
+      } catch {
+        toaster.create({ title: "Error fetching channels", type: "error" });
       }
     };
 
-    const fetchProjects = async () => {
+    const fetchProjects = async (): Promise<void> => {
       try {
         const response = await fetch("/api/asana/fetcher");
-        const projects: { id: string; name: string }[] = [];
-
         if (!response.ok) throw new Error("Failed to fetch Asana data");
+
         const data = await response.json();
-        for (const workspace of data.data) {
-          for (const project of workspace.projects) {
-            projects.push({ id: project.gid, name: project.name });
-          }
-        }
+        const projects = data.data.flatMap((workspace: any) =>
+          workspace.projects.map((project: any) => ({
+            id: project.gid,
+            name: project.name,
+          }))
+        );
         setProjects(projects);
-      } catch (error: any) {
-        console.error(error);
-        toaster.create({
-          title: "There was Some Error fetching the Projects",
-          type: "error",
-        });
+      } catch {
+        toaster.create({ title: "Error fetching projects", type: "error" });
       }
     };
 
@@ -161,10 +143,10 @@ export default function Editor() {
     fetchRepos();
     fetchChannels();
     fetchProjects();
-  }, []);
+  }, [slug]);
 
   return (
-    <div className="w-full h-[92vh]">
+    <div className="h-[92vh] w-full">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -177,7 +159,7 @@ export default function Editor() {
         snapToGrid
         colorMode={theme as ColorMode}
         minZoom={1.5}
-        fitView={true}
+        fitView
       >
         <Background //@ts-ignore
           variant="dots"
@@ -194,4 +176,6 @@ export default function Editor() {
       </ReactFlow>
     </div>
   );
-}
+};
+
+export default Editor;

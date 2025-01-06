@@ -23,13 +23,11 @@ type FlowState = {
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
   addNewEdge: (connection: any) => void;
-
   githubHandler: () => void;
   slackHandler: () => void;
   asanaHandler: () => void;
   conditionHandler: () => void;
   gptHandler: () => void;
-
   repos: string[];
   setRepos: (repos: string[]) => void;
   channels: string[];
@@ -54,31 +52,19 @@ export const useFlowStore = create<FlowState>((set) => ({
     condition: ConditionNode,
     gpt: GPTNode,
   },
-
-  addNode: (node) =>
-    set((state) => ({
-      nodes: [...state.nodes, node],
-    })),
-
+  addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
   removeNode: (nodeId) =>
     set((state) => ({
       nodes: state.nodes.filter((node) => node.id !== nodeId),
     })),
-
-  addEdge: (edge) =>
-    set((state) => ({
-      edges: [...state.edges, edge],
-    })),
-
+  addEdge: (edge) => set((state) => ({ edges: [...state.edges, edge] })),
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
   addNewEdge: (connection) =>
     set((state) => {
       const { edges, nodes } = state;
-
       const targetNode = nodes.find((node) => node.id === connection.target);
       const sourceNode = nodes.find((node) => node.id === connection.source);
-
       const isGitHubNode = (node: any) => node?.type === "github";
       const isGPTNode = (node: any) => node?.type === "gpt";
       const isConditionNode = (node: any) => node?.type === "condition";
@@ -87,7 +73,7 @@ export const useFlowStore = create<FlowState>((set) => ({
         (isConditionNode(targetNode) || isGPTNode(targetNode)) &&
         isGPTNode(sourceNode)
       ) {
-        return { edges: edges };
+        return { edges };
       }
 
       if (isGPTNode(sourceNode) || isGitHubNode(sourceNode)) {
@@ -112,57 +98,38 @@ export const useFlowStore = create<FlowState>((set) => ({
     const newNode: Node = {
       id: `github-${Math.random().toString(36).slice(2, 9)}`,
       type: "github",
-      data: {
-        repoName: "",
-        listenerType: "",
-      },
+      data: { repoName: "", listenerType: "" },
       position: {
         x: Math.floor(Math.random() * 600),
         y: (Math.random() < 0.5 ? -1 : 1) * 50,
       },
     };
-    set((state) => ({
-      nodes: [...state.nodes, newNode],
-    }));
+    set((state) => ({ nodes: [...state.nodes, newNode] }));
   },
-
   slackHandler: () => {
     const newNode: Node = {
       id: `slack-${Math.random().toString(36).slice(2, 9)}`,
       type: "slack",
-      data: {
-        channel: "",
-        message: "",
-      },
+      data: { channel: "", message: "" },
       position: {
         x: Math.floor(Math.random() * 600),
         y: (Math.random() < 0.5 ? -1 : 1) * 50,
       },
     };
-    set((state) => ({
-      nodes: [...state.nodes, newNode],
-    }));
+    set((state) => ({ nodes: [...state.nodes, newNode] }));
   },
-
   asanaHandler: () => {
     const newNode: Node = {
       id: `asana-${Math.random().toString(36).slice(2, 9)}`,
       type: "asana",
-      data: {
-        project: "",
-        taskName: "",
-        taskNotes: "",
-      },
+      data: { project: "", taskName: "", taskNotes: "" },
       position: {
         x: Math.floor(Math.random() * 600),
         y: (Math.random() < 0.5 ? -1 : 1) * 100,
       },
     };
-    set((state) => ({
-      nodes: [...state.nodes, newNode],
-    }));
+    set((state) => ({ nodes: [...state.nodes, newNode] }));
   },
-
   gptHandler: () => {
     const newNode: Node = {
       id: `gpt-${Math.random().toString(36).slice(2, 9)}`,
@@ -173,28 +140,19 @@ export const useFlowStore = create<FlowState>((set) => ({
         y: (Math.random() < 0.5 ? -1 : 1) * 100,
       },
     };
-    set((state) => ({
-      nodes: [...state.nodes, newNode],
-    }));
+    set((state) => ({ nodes: [...state.nodes, newNode] }));
   },
-
   conditionHandler: () => {
     const newNode: Node = {
       id: `condition-${Math.random().toString(36).slice(2, 9)}`,
       type: "condition",
-      data: {
-        variable: "",
-        condition: "",
-        value: "",
-      },
+      data: { variable: "", condition: "", value: "" },
       position: {
         x: Math.floor(Math.random() * 600),
         y: (Math.random() < 0.5 ? -1 : 1) * 50,
       },
     };
-    set((state) => ({
-      nodes: [...state.nodes, newNode],
-    }));
+    set((state) => ({ nodes: [...state.nodes, newNode] }));
   },
   repos: [],
   setRepos: (repos) => set({ repos }),

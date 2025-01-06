@@ -1,4 +1,6 @@
 "use client";
+
+import React, { useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -16,14 +18,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { IconBrandAsana, IconInfoCircle } from "@tabler/icons-react";
-import {
-  Edge,
-  Handle,
-  Position,
-  type Node,
-  type NodeProps,
-} from "@xyflow/react";
-import React, { useState } from "react";
+import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
 import { useFlowStore } from "../store/reactFlowStore";
 import { toaster } from "@/components/ui/toaster";
 import {
@@ -51,22 +46,19 @@ type Project = {
 
 type AsanaNode = Node<AsanaNodeData, "asana">;
 type AsanaNodeProps = NodeProps<AsanaNode>;
-
 const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
   const { project, taskName, taskNotes } = data;
   const { projects, setNodes, nodes, edges, setEdges } = useFlowStore();
   const [selectedProject, setSelectedProject] = useState<Project>(
     project || projects[0]
   );
-  const [newTaskName, setTaskName] = useState<string>(taskName as string);
-  const [newTaskNotes, setTaskNotes] = useState<string>(taskNotes as string);
+  const [newTaskName, setTaskName] = useState(taskName || "");
+  const [newTaskNotes, setTaskNotes] = useState(taskNotes || "");
 
-  const source = () => {
-    const source = edges.find((edge) => edge.target === id);
-    return source?.source.startsWith("gpt");
-  };
+  const source = () =>
+    edges.find((edge) => edge.target === id)?.source.startsWith("gpt");
 
-  const handler = () => {
+  const handleSave = () => {
     setNodes(
       nodes.map((node) =>
         node.id === id
@@ -84,158 +76,145 @@ const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
     );
     toaster.create({ title: "Changes saved successfully", type: "success" });
   };
-  const variableAdder = (variable: string) => {
-    !source() && setTaskNotes(newTaskNotes + "var::" + variable + " ");
+
+  const addVariable = (variable: string) => {
+    if (!source()) setTaskNotes((prev) => `${prev}var::${variable} `);
   };
 
-  const handleDeleteNode = () => {
-    const updatedNodes = nodes.filter((el: Node) => el.id !== id);
-    const updatedEdges = edges.filter(
-      (el: Edge) => el.source !== id && el.target !== id
-    );
-    setNodes(updatedNodes);
-    setEdges(updatedEdges);
+  const deleteNode = (): void => {
+    setNodes(nodes.filter((node) => node.id !== id));
+    setEdges(edges.filter((edge) => edge.source !== id && edge.target !== id));
   };
 
-  const handleDeleteEdge = () => {
-    const updatedEdges = edges.filter((el: Edge) => el.target !== id);
-    setEdges(updatedEdges);
+  const deleteEdge = (): void => {
+    setEdges(edges.filter((edge) => edge.target !== id));
   };
 
   return (
-    <>
-      {" "}
-      <ContextMenu>
-        <ContextMenuTrigger>
-          <Drawer>
-            <DrawerTrigger>
-              <Node />
-              <Handle
-                type="target"
-                position={Position.Left}
-                style={{
-                  width: "12px",
-                  height: "12px",
-                  color: "#FF0083",
-                  background: "#FF0083",
-                }}
-              />
-            </DrawerTrigger>
-            <DrawerContent className="my-[100px]">
-              <div className="w-[350px] mx-auto">
-                <DrawerHeader>
-                  <DrawerTitle className="text-center">
-                    Asana Node Actions
-                  </DrawerTitle>
-                  <DrawerDescription className="text-center">
-                    Add Task to Asana Project
-                  </DrawerDescription>
-                </DrawerHeader>
-                <form className="space-y-4">
-                  <div>
-                    <label className="block text-md font-medium ">
-                      Select Project
-                    </label>
-                    <Select
-                      onValueChange={(value) => {
-                        const selectedProject = projects.find(
-                          (project) => project.name === value
-                        );
-                        if (selectedProject) {
-                          setSelectedProject(selectedProject);
-                        }
-                      }}
-                      value={selectedProject.name}
-                    >
-                      <SelectTrigger className="w-full  text-md mt-1 p-2 border rounded-md ">
-                        <SelectValue placeholder="Select Project" />
-                      </SelectTrigger>
-                      <SelectContent className="w-[350px]">
-                        {projects.map((project) => (
-                          <SelectItem key={project.id} value={project.name}>
-                            {project.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-md font-medium ">
-                      Task Name
-                    </label>
-                    <Input
-                      value={newTaskName}
-                      onChange={(e) => setTaskName(e.target.value)}
-                      className="w-full p-2 border text-md rounded-md"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-md font-medium ">
-                      Task Notes
-                    </label>
-                    <Textarea
-                      disabled={source()}
-                      value={source() ? "GPT Handler" : newTaskNotes}
-                      onChange={(e) => setTaskNotes(e.target.value)}
-                      className="w-full p-2 border text-md rounded-md "
-                    />
-                  </div>
-                </form>
-                <div className="flex flex-col my-5 space-y-4">
-                  <VariableScrollArea onClick={variableAdder} />
-                  <div className="flex items-center flex-grow justify-end space-y-3 flex-col">
-                    <small className="flex flex-row items-center text-sm space-x-1">
-                      <IconInfoCircle size={20} />
-                      <p>Use </p>
-                      <span className="font-semibold tracking-wider px-2 py-0 ">
-                        var::
-                      </span>
-                      <p>to use variables </p>
-                    </small>
-                  </div>
+    <ContextMenu>
+      <ContextMenuTrigger>
+        <Drawer>
+          <DrawerTrigger>
+            <Node />
+            <Handle
+              type="target"
+              position={Position.Left}
+              style={{
+                background: "#FF0083",
+                color: "#FF0083",
+                height: "12px",
+                width: "12px",
+              }}
+            />
+          </DrawerTrigger>
+          <DrawerContent className="my-[100px]">
+            <div className="mx-auto w-[350px]">
+              <DrawerHeader>
+                <DrawerTitle className="text-center">
+                  Asana Node Actions
+                </DrawerTitle>
+                <DrawerDescription className="text-center">
+                  Add Task to Asana Project
+                </DrawerDescription>
+              </DrawerHeader>
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-md font-medium">
+                    Select Project
+                  </label>
+                  <Select
+                    onValueChange={(value) =>
+                      setSelectedProject(
+                        projects.find((project) => project.name === value) ||
+                          projects[0]
+                      )
+                    }
+                    value={selectedProject?.name || ""}
+                  >
+                    <SelectTrigger className="w-full rounded-md border p-2 text-md mt-1">
+                      <SelectValue placeholder="Select Project" />
+                    </SelectTrigger>
+                    <SelectContent className="w-[350px]">
+                      {projects.map((project) => (
+                        <SelectItem key={project.id} value={project.name}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <DrawerFooter className="flex flex-row space-x-3 mt-3 w-full items-center justify-center">
-                  <DrawerClose>
-                    <span
-                      onClick={handler}
-                      className="border p-2 px-3 rounded-lg"
-                    >
-                      Submit
+                <div>
+                  <label className="block text-md font-medium">Task Name</label>
+                  <Input
+                    value={newTaskName}
+                    onChange={(e) => setTaskName(e.target.value)}
+                    className="w-full rounded-md border p-2 text-md"
+                  />
+                </div>
+                <div>
+                  <label className="block text-md font-medium">
+                    Task Notes
+                  </label>
+                  <Textarea
+                    disabled={source()}
+                    value={source() ? "GPT Handler" : newTaskNotes}
+                    onChange={(e) => setTaskNotes(e.target.value)}
+                    className="w-full rounded-md border p-2 text-md"
+                  />
+                </div>
+              </form>
+              <div className="my-5 flex flex-col space-y-4">
+                <VariableScrollArea onClick={addVariable} />
+                <div className="flex flex-col items-end space-y-3">
+                  <small className="flex items-center text-sm space-x-1">
+                    <IconInfoCircle size={20} />
+                    <span>Use </span>
+                    <span className="font-semibold px-2 py-0 tracking-wider">
+                      var::
                     </span>
-                  </DrawerClose>
-                  <DrawerClose>
-                    <span className="border p-2 px-3 rounded-lg">Cancel</span>
-                  </DrawerClose>
-                </DrawerFooter>
+                    <span>to use variables</span>
+                  </small>
+                </div>
               </div>
-            </DrawerContent>
-          </Drawer>{" "}
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-          <ContextMenuItem>
-            <span onClick={handleDeleteEdge}>Delete Source Edge</span>
-          </ContextMenuItem>
-          <ContextMenuItem>
-            <span onClick={handleDeleteNode}>Delete Node</span>
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-    </>
+              <DrawerFooter className="mt-3 flex w-full items-center justify-center space-x-3">
+                <DrawerClose>
+                  <button
+                    onClick={handleSave}
+                    className="rounded-lg border px-3 py-2"
+                  >
+                    Submit
+                  </button>
+                </DrawerClose>
+                <DrawerClose>
+                  <button className="rounded-lg border px-3 py-2">
+                    Cancel
+                  </button>
+                </DrawerClose>
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem>
+          <button onClick={deleteEdge}>Delete Source Edge</button>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <button onClick={deleteNode}>Delete Node</button>
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 };
 
-const Node = () => {
-  return (
-    <span className="dark:bg-neutral-900 bg-white rounded-xl w-full items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
-      <IconBrandAsana />
-      <div className="flex flex-col justify-start items-start">
-        <h5 className="text-lg font-semibold">Asana</h5>
-        <p className="text-gray-400">Add Task to Asana Project</p>
-      </div>
-    </span>
-  );
-};
+const Node: React.FC = () => (
+  <span className="flex w-full items-center space-x-5 rounded-xl border border-[#FF0083] bg-white p-5 dark:bg-neutral-900">
+    <IconBrandAsana />
+    <div className="flex flex-col items-start">
+      <h5 className="text-lg font-semibold">Asana</h5>
+      <p className="text-gray-400">Add Task to Asana Project</p>
+    </div>
+  </span>
+);
 
 export default AsanaNode;

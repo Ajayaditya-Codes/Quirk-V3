@@ -1,13 +1,13 @@
 "use client";
+import React from "react";
 import {
-  type Edge,
   Handle,
   Position,
   type Node,
   type NodeProps,
+  type Edge,
 } from "@xyflow/react";
 import { IconBrandOpenai } from "@tabler/icons-react";
-import React from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -25,62 +25,56 @@ type GPTNodeProps = NodeProps<GPTNode>;
 
 const GPTNode: React.FC<GPTNodeProps> = ({ id }) => {
   const { setNodes, nodes, edges, setEdges } = useFlowStore();
-  const handleDeleteNode = () => {
-    const updatedNodes = nodes.filter((el: Node) => el.id !== id);
-    const updatedEdges = edges.filter(
-      (el: Edge) => el.source !== id && el.target !== id
-    );
-    setNodes(updatedNodes);
-    setEdges(updatedEdges);
+
+  const deleteNode = (): void => {
+    setNodes(nodes.filter((node) => node.id !== id));
+    setEdges(edges.filter((edge) => edge.source !== id && edge.target !== id));
   };
 
-  const handleDeleteEdge = () => {
-    const updatedEdges = edges.filter((el: Edge) => el.target !== id);
-    setEdges(updatedEdges);
+  const deleteEdge = (): void => {
+    setEdges(edges.filter((edge) => edge.target !== id));
   };
 
   return (
-    <>
-      <ContextMenu>
-        <ContextMenuTrigger>
-          <span className="dark:bg-neutral-900 bg-white rounded-xl w-full items-center p-5 flex flex-row space-x-5 border-[#FF0083] border">
-            <IconBrandOpenai />
-            <div className="flex flex-col justify-start items-start">
-              <h5 className="text-lg font-semibold">GPT Webhook Handler</h5>
-              <p className="text-gray-400">Generate Messages using GPT</p>
-            </div>
-          </span>
-          <Handle
-            type="target"
-            position={Position.Left}
-            style={{
-              width: "12px",
-              height: "12px",
-              color: "#FF0083",
-              background: "#FF0083",
-            }}
-          />
-          <Handle
-            type="source"
-            position={Position.Right}
-            style={{
-              width: "12px",
-              height: "12px",
-              color: "#FF0083",
-              background: "#FF0083",
-            }}
-          />{" "}
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-          <ContextMenuItem>
-            <span onClick={handleDeleteEdge}>Delete Source Edge</span>
-          </ContextMenuItem>
-          <ContextMenuItem>
-            <span onClick={handleDeleteNode}>Delete Node</span>
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-    </>
+    <ContextMenu>
+      <ContextMenuTrigger>
+        <span className="flex w-full items-center space-x-5 rounded-xl border border-[#FF0083] bg-white p-5 dark:bg-neutral-900">
+          <IconBrandOpenai />
+          <div className="flex flex-col items-start justify-start">
+            <h5 className="text-lg font-semibold">GPT Webhook Handler</h5>
+            <p className="text-gray-400">Generate Messages using GPT</p>
+          </div>
+        </span>
+        <Handle
+          type="target"
+          position={Position.Left}
+          style={{
+            background: "#FF0083",
+            color: "#FF0083",
+            height: "12px",
+            width: "12px",
+          }}
+        />
+        <Handle
+          type="source"
+          position={Position.Right}
+          style={{
+            background: "#FF0083",
+            color: "#FF0083",
+            height: "12px",
+            width: "12px",
+          }}
+        />
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem>
+          <span onClick={deleteEdge}>Delete Source Edge</span>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <span onClick={deleteNode}>Delete Node</span>
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 };
 
