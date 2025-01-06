@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { Logs, Workflows, Users } from "@/db/schema";
-import { ConsoleLogWriter, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const { workflowName, nodes, edges, githubData, publish } = await req.json();
 
   if (!workflowName || !nodes || !edges || !githubData) {
@@ -183,8 +183,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "Workflow updated successfully" });
   } catch (error) {
-    console.error("Failed to update workflow:", error);
-
     await db.insert(Logs).values({
       LogMessage: `Failed to update workflow ${workflowName}`,
       WorkflowName: workflowName,
@@ -196,4 +194,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+};

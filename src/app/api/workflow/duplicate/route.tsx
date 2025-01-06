@@ -4,23 +4,23 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const { getUser } = getKindeServerSession();
   const { id } = await getUser();
-
-  const { workflow, newWorkflow } = await req.json();
-
-  if (!workflow || !newWorkflow) {
-    return NextResponse.json(
-      { error: "New workflow name or Original Workflow name not provided" },
-      { status: 400 }
-    );
-  }
 
   if (!id) {
     return NextResponse.json(
       { error: "User not authenticated" },
       { status: 401 }
+    );
+  }
+
+  const { workflow, newWorkflow } = await req.json();
+
+  if (!workflow || !newWorkflow) {
+    return NextResponse.json(
+      { error: "New workflow name or original workflow name not provided" },
+      { status: 400 }
     );
   }
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     .execute();
 
   if (user.length === 0) {
-    return NextResponse.json({ error: "No User found" }, { status: 404 });
+    return NextResponse.json({ error: "No user found" }, { status: 404 });
   }
 
   const currentWorkflows = user[0].Workflows || [];
@@ -59,10 +59,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     .execute();
 
   if (existingWorkflow.length === 0) {
-    return NextResponse.json({ error: "Workflow Not Found" }, { status: 404 });
+    return NextResponse.json({ error: "Workflow not found" }, { status: 404 });
   }
 
   try {
+    const { Nodes, Edges, GitHubNode } = existingWorkflow[0];
+
     await db
       .update(Users)
       .set({ Workflows: updatedWorkflows })
@@ -73,27 +75,29 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .insert(Workflows)
       .values({
         WorkflowName: newWorkflow,
-        Nodes: existingWorkflow[0].Nodes,
-        Edges: existingWorkflow[0].Edges,
-        GitHubNode: existingWorkflow[0].GitHubNode,
+        Nodes,
+        Edges,
+        GitHubNode,
       })
       .execute();
 
     await db.insert(Logs).values({
-      LogMessage: `Workflow ${newWorkflow} duplicated from ${workflow}`,
+      LogMessage: `Workflow "${newWorkflow}" duplicated from "${workflow}"`,
       WorkflowName: newWorkflow,
       Success: true,
     });
 
     return NextResponse.json(
-      { message: `Workflow ${newWorkflow} duplicated from ${workflow}` },
+      {
+        message: `Workflow "${newWorkflow}" duplicated successfully from "${workflow}"`,
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Failed to duplicate Workflow:", error);
+    console.error("Failed to duplicate workflow:", error);
     return NextResponse.json(
-      { error: `Failed to duplicate Workflow ${workflow}` },
-      { status: 400 }
+      { error: `Failed to duplicate workflow "${workflow}"` },
+      { status: 500 }
     );
   }
-}
+};

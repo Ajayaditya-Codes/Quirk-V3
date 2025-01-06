@@ -4,7 +4,7 @@ import { Logs, Workflows } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const { getUser } = getKindeServerSession();
   const { id } = await getUser();
 
@@ -52,8 +52,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ message: "Workflow deactivated successfully" });
   } catch (error) {
-    console.error("Failed to deactivate workflow:", error);
-
     await db.insert(Logs).values({
       LogMessage: `Failed to deactivate Workflow ${workflowName}`,
       WorkflowName: workflowName,
@@ -65,4 +63,4 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       { status: 500 }
     );
   }
-}
+};

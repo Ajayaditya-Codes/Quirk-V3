@@ -4,9 +4,16 @@ import { Logs, Users, Workflows } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export async function DELETE(req: NextRequest): Promise<NextResponse> {
+export const DELETE = async (req: NextRequest): Promise<NextResponse> => {
   const { getUser } = getKindeServerSession();
   const { id } = await getUser();
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "User not authenticated" },
+      { status: 401 }
+    );
+  }
 
   const user = await db
     .select()
@@ -47,10 +54,6 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
       .where(eq(Workflows.WorkflowName, workflowName))
       .execute();
 
-    type GithubData = { repoName: string; listenerType: string };
-
-    const GithubData: GithubData = existingWorkflow[0].GitHubNode as GithubData;
-
     if (existingWorkflow.length === 0) {
       return NextResponse.json(
         { error: "Workflow not found" },
@@ -72,6 +75,7 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
     await db.delete(Logs).where(eq(Logs.WorkflowName, workflowName)).execute();
   } catch (error) {
     console.error("Failed to delete workflow:", error);
+
     return NextResponse.json(
       { error: "Failed to delete workflow" },
       { status: 500 }
@@ -79,4 +83,4 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
   }
 
   return NextResponse.json({ message: "Workflow deleted successfully" });
-}
+};

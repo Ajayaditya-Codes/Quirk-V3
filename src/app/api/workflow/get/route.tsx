@@ -50,7 +50,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     if (!workflowData.length) {
       return NextResponse.json(
-        { error: `Workflow "${workflowName}" not found` },
+        { error: `Workflow \"${workflowName}\" not found` },
         { status: 404 }
       );
     }
