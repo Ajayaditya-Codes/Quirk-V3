@@ -1,5 +1,3 @@
-import { BentoGrid, BentoGridItem } from "@/components/ui/bentoGrid";
-
 export default function Testimonials() {
   const testimonials = [
     {
@@ -33,28 +31,25 @@ export default function Testimonials() {
       description:
         "Theming is such a thoughtful feature! I can switch between light and dark modes depending on the time of day, and the responsive design means everything looks great, no matter the screen size.",
     },
-    {
-      title:
-        "Real-time analytics have taken my productivity to the next level.",
-      description:
-        "I love the analytics dashboard—it’s incredibly detailed! I can see how many actions each workflow performs every month, helping me identify what’s working and what needs tweaking. It’s like having my own performance coach!",
-    },
   ];
   return (
-    <div className="my-[200px] text-center flex flex-col items-center justify-center w-full gap-y-5">
-      <h2 className="text-xl  text-center bg-[#8a00c4] px-7 py-3 rounded-2xl font-semibold text-white">
-        Project Highlights
-      </h2>
-      <BentoGrid className="w-[70%] mx-auto mt-5">
-        {testimonials.map((item, i) => (
-          <BentoGridItem
-            key={i}
-            title={item.title}
-            description={item.description}
-            className={i === 3 || i === 6 ? "md:col-span-2" : ""}
-          />
-        ))}
-      </BentoGrid>{" "}
-    </div>
+    <section>
+      <div className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <h2 className="text-center font-bold tracking-tight text-5xl">
+          How Quirk Transforms Workflows
+        </h2>
+
+        <div className="mt-10 [column-fill:_balance] sm:columns-2 sm:gap-6 lg:columns-3 lg:gap-8">
+          {testimonials.map((testimonial, index) => (
+            <div key={index} className="mb-8 sm:break-inside-avoid">
+              <blockquote className="rounded-lg bg-gray-200 dark:bg-neutral-800 p-6 shadow-xl sm:p-8">
+                <h5 className="font-bold text-xl">{testimonial.title}</h5>
+                <p className="mt-4">{testimonial.description}</p>
+              </blockquote>
+            </div>
+          ))}{" "}
+        </div>
+      </div>
+    </section>
   );
 }

@@ -11,12 +11,12 @@ export default function Home() {
       <main className="p-10">
         <HeroSection />
         <FeaturesSection />
-        <div className="hidden xl:flex">
-          <Testimonials />
+        <Testimonials />
+        {/*<div className="hidden xl:flex">
         </div>
         <div className="xl:hidden flex">
           <CardsTestimonial />
-        </div>
+        </div> */}
         <footer className="w-full flex flex-col items-center justify-center md:text-base text-sm p-10 px-0 text-center">
           © Quirk, 2024. All rights reserved.
         </footer>{" "}
