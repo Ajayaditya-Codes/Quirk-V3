@@ -1,12 +1,8 @@
-import { db } from "@/db/drizzle";
-import { Users } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
   try {
-    const { channel, text } = await req.json();
+    const { channel, text, token } = await req.json();
 
     if (!channel || !text) {
       return NextResponse.json(
@@ -15,23 +11,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       );
     }
 
-    const { getUser } = getKindeServerSession();
-    const userSession = await getUser();
-
-    if (!userSession?.id) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 }
-      );
-    }
-
-    const [userRecord] = await db
-      .select({ SlackAccessToken: Users.SlackAccessToken })
-      .from(Users)
-      .where(eq(Users.KindeID, userSession.id))
-      .execute();
-
-    const slackToken = userRecord?.SlackAccessToken;
+    const slackToken = token;
 
     if (!slackToken) {
       return NextResponse.json(

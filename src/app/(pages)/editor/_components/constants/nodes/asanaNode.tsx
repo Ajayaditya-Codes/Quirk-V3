@@ -165,32 +165,30 @@ const AsanaNode: React.FC<AsanaNodeProps> = ({ id, data }) => {
               </form>
               <div className="my-5 flex flex-col space-y-4">
                 <VariableScrollArea onClick={addVariable} />
-                <div className="flex flex-col items-end space-y-3">
-                  <small className="flex items-center text-sm space-x-1">
+                <div className="flex flex-col items-center justify-end space-y-3">
+                  <small className="flex flex-row items-center space-x-1 text-sm">
                     <IconInfoCircle size={20} />
-                    <span>Use </span>
-                    <span className="font-semibold px-2 py-0 tracking-wider">
+                    <p>Use </p>
+                    <span className="px-2 py-0 font-semibold tracking-wider">
                       var::
                     </span>
-                    <span>to use variables</span>
+                    <p>to use variables</p>
                   </small>
                 </div>
               </div>
-              <DrawerFooter className="mt-3 flex w-full items-center justify-center space-x-3">
+              <DrawerFooter className="mt-3 flex w-full flex-row items-center justify-center space-x-3">
                 <DrawerClose>
-                  <button
+                  <span
                     onClick={handleSave}
-                    className="rounded-lg border px-3 py-2"
+                    className="rounded-lg border p-2 px-3"
                   >
                     Submit
-                  </button>
+                  </span>
                 </DrawerClose>
                 <DrawerClose>
-                  <button className="rounded-lg border px-3 py-2">
-                    Cancel
-                  </button>
+                  <span className="rounded-lg border p-2 px-3">Cancel</span>
                 </DrawerClose>
-              </DrawerFooter>
+              </DrawerFooter>{" "}
             </div>
           </DrawerContent>
         </Drawer>

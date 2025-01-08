@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
     listenerType: "issues",
   };
 
-  if (!body.issue && body?.hook?.events?.includes("push")) {
+  if (!body.issue && body.pusher) {
     GitHubData.listenerType = "push";
   }
 
@@ -142,6 +142,11 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
 
       if (skip) continue;
 
+      if (childNode.id.startsWith("gpt")) {
+        let trace = edges.filter((edg) => edg.source === childNode.id)[0];
+        childNode = nodes.filter((node) => node.id === trace.target)[0];
+      }
+
       if (childNode.id.startsWith("asana")) {
         AsanaHandler(
           asanaRefreshToken,
@@ -191,22 +196,18 @@ const SlackHandler = async (
   }
 
   const text =
-    data?.message === "c7awKoAvbe"
-      ? geminiHandler(payload)
+    (await data?.message) === "c7awKoAvbe"
+      ? await geminiHandler(payload)
       : preprocessMessage(data?.message as string, payload);
-
   try {
-    const response = await fetch(
-      "https://quirk-v1.vercel.app/api/slack/messenger",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          channel: data?.channel,
-          text: text,
-          token: SlackAccessToken,
-        }),
-      }
-    );
+    const response = await fetch("https://localhost:3000/api/slack/messenger", {
+      method: "POST",
+      body: JSON.stringify({
+        channel: data?.channel,
+        text: text,
+        token: SlackAccessToken,
+      }),
+    });
     const result = await response.json();
 
     if (response.ok) {
@@ -267,13 +268,13 @@ const AsanaHandler = async (
 
   const taskName = preprocessMessage(data?.taskName, payload);
   const taskNotes =
-    data?.taskNotes === "c7awKoAvbe"
-      ? geminiHandler(payload)
-      : preprocessMessage(data?.taskNotes, payload);
+    (await data?.taskNotes) === "c7awKoAvbe"
+      ? await geminiHandler(payload)
+      : preprocessMessage(data?.taskNotes as string, payload);
 
   try {
     const response = await fetch(
-      "https://quirk-v1.vercel.app/api/asana/create-task",
+      "https://localhost:3000/api/asana/create-task",
       {
         method: "POST",
         body: JSON.stringify({

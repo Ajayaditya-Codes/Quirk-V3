@@ -76,7 +76,7 @@ export const useFlowStore = create<FlowState>((set) => ({
         return { edges };
       }
 
-      if (isGPTNode(sourceNode) || isGitHubNode(sourceNode)) {
+      if (isGitHubNode(sourceNode)) {
         return { edges: addEdge(connection, edges) };
       }
 

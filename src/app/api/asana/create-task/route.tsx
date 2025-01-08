@@ -1,12 +1,8 @@
-import { db } from "@/db/drizzle";
-import { Users } from "@/db/schema";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const Asana = require("asana");
-  const { projectIds, taskName, taskNotes } = await req.json();
+  const { token, projectIds, taskName, taskNotes } = await req.json();
 
   if (!projectIds || !taskName) {
     return NextResponse.json(
@@ -15,31 +11,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  const userId = user?.id;
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "User not authenticated" },
-      { status: 401 }
-    );
-  }
-
-  const userRecord = await db
-    .select()
-    .from(Users)
-    .where(eq(Users.KindeID, userId))
-    .execute();
-
-  if (!userRecord.length || !userRecord[0].AsanaRefreshToken) {
-    return NextResponse.json(
-      { error: "No Asana refresh token found" },
-      { status: 404 }
-    );
-  }
-
-  const asanaRefreshToken = userRecord[0].AsanaRefreshToken;
+  const asanaRefreshToken = token;
   const tokenUrl = "https://app.asana.com/-/oauth_token";
   const clientId = process.env.ASANA_CLIENT_ID;
   const clientSecret = process.env.ASANA_CLIENT_SECRET;
@@ -87,7 +59,7 @@ export async function POST(req: NextRequest) {
         completed: false,
         assignee: "me",
         projects: projectIds,
-        taskNotes: taskNotes,
+        notesx: taskNotes,
       },
     };
     const opts = {};
@@ -104,7 +76,8 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-  } catch {
+  } catch (error: any) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to retrieve data" },
       { status: 500 }

@@ -2,7 +2,7 @@ import { Octokit } from "octokit";
 import { NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { ConsoleLogWriter, eq } from "drizzle-orm";
 
 export async function POST(req: Request): Promise<NextResponse> {
   const { repo, workflow, id } = await req.json();

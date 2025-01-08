@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ThemeSelector } from "@/components/global/theme-selector";
 
 export default function Pricing() {
   const email = "ajayaditya.dev@proton.me";
@@ -120,6 +121,10 @@ export default function Pricing() {
           </div>
         </div>
       </main>
+      <footer className="w-full flex flex-row space-x-5 items-center justify-center md:text-base text-sm p-10 px-0 text-center">
+        <p>© Quirk, 2024. All rights reserved.</p>
+        <ThemeSelector />
+      </footer>{" "}
     </div>
   );
 }
