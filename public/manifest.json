@@ -1,0 +1,9 @@
+{
+  "name": "Quirk V2",
+  "short_name": "Quirk",
+  "theme_color": "#8a00c4",
+  "background_color": "#000000",
+  "display": "fullscreen",
+  "scope": "/",
+  "start_url": "/"
+}
