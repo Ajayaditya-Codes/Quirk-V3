@@ -70,7 +70,7 @@ export const GET = async (req: NextRequest): Promise<NextResponse> => {
     const accessToken = await fetchGitHubAccessToken(code);
     await updateGitHubAccessToken(accessToken);
 
-    return NextResponse.redirect("https://localhost:3000/connections");
+    return NextResponse.redirect("https://quirk-v2.vercel.app/connections");
   } catch (error) {
     console.error("Error during GitHub authentication flow:", error);
     return NextResponse.json(

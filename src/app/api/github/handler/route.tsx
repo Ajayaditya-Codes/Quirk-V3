@@ -200,7 +200,7 @@ const SlackHandler = async (
       ? await geminiHandler(payload)
       : preprocessMessage(data?.message as string, payload);
   try {
-    const response = await fetch("https://localhost:3000/api/slack/messenger", {
+    const response = await fetch("https://quirk-v2.vercel.app/api/slack/messenger", {
       method: "POST",
       body: JSON.stringify({
         channel: data?.channel,
@@ -274,7 +274,7 @@ const AsanaHandler = async (
 
   try {
     const response = await fetch(
-      "https://localhost:3000/api/asana/create-task",
+      "https://quirk-v2.vercel.app/api/asana/create-task",
       {
         method: "POST",
         body: JSON.stringify({

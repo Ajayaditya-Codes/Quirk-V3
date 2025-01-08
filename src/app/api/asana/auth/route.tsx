@@ -56,7 +56,7 @@ export const GET = async (req: NextRequest): Promise<NextResponse> => {
     }
 
     await updateAsanaAccessToken(data.refresh_token);
-    return NextResponse.redirect("https://localhost:3000/connections");
+    return NextResponse.redirect("https://quirk-v2.vercel.app/connections");
   } catch (error) {
     return NextResponse.json(
       { error: "Token exchange failed" },
