@@ -306,9 +306,7 @@ const AsanaHandler = async (
     }
   } catch {
     await db
-      .insert(Logs)    Docs
-
-New Project
+      .insert(Logs)
       .values({
         LogMessage: "There was Some Error in Asana Task Creation",
         Success: false,
