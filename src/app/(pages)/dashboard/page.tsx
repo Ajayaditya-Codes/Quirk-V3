@@ -51,13 +51,12 @@ const fetchUserDetails = async (): Promise<User | null> => {
       .execute();
 
     return result?.length ? (result[0] as User) : null;
-  } catch (error: any) {
+  } catch (error) {
     toaster.create({
       title: "Error fetching user details",
-      description: error?.message || "Something went wrong.",
+      description: (error as Error)?.message || "Something went wrong.",
       type: "error",
     });
-    console.error("Error fetching user details:", error);
     return null;
   }
 };
@@ -82,18 +81,17 @@ const fetchLogs = async (): Promise<Log[] | null> => {
       .execute();
 
     return logs;
-  } catch (error: any) {
+  } catch (error) {
     toaster.create({
       title: "Error fetching user logs",
-      description: error?.message || "Something went wrong.",
+      description: (error as Error)?.message || "Something went wrong.",
       type: "error",
     });
-    console.error("Error fetching logs:", error);
     return null;
   }
 };
 
-export const Greet = async () => {
+const Greet: React.FC = async () => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
 

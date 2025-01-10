@@ -2,7 +2,7 @@ import { Octokit } from "octokit";
 import { NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
-import { ConsoleLogWriter, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export async function POST(req: Request): Promise<NextResponse> {
   const { repo, workflow, id } = await req.json();
@@ -68,10 +68,9 @@ export async function POST(req: Request): Promise<NextResponse> {
       data: response.data,
       hook_id: response.data.id,
     });
-  } catch (error: any) {
-    console.error("Error creating webhook:", error);
+  } catch (error) {
     return NextResponse.json(
-      { message: "Error creating webhook", error: error.message },
+      { message: "Error creating webhook", error: (error as Error)?.message },
       { status: 500 }
     );
   }

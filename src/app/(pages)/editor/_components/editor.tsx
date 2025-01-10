@@ -19,6 +19,15 @@ import { useFlowStore } from "./constants/store/reactFlowStore";
 import { usePathname } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
+type Project = {
+  gid: string;
+  name: string;
+};
+
+type Workspace = {
+  projects: Project[];
+};
+
 const Editor = (): ReactElement => {
   const path = usePathname();
   const slug = path?.split("/").pop();
@@ -127,8 +136,8 @@ const Editor = (): ReactElement => {
         if (!response.ok) throw new Error("Failed to fetch Asana data");
 
         const data = await response.json();
-        const projects = data.data.flatMap((workspace: any) =>
-          workspace.projects.map((project: any) => ({
+        const projects = data.data.flatMap((workspace: Workspace) =>
+          workspace.projects.map((project: Project) => ({
             id: project.gid,
             name: project.name,
           }))
@@ -161,7 +170,7 @@ const Editor = (): ReactElement => {
         minZoom={1.5}
         fitView
       >
-        <Background //@ts-ignore
+        <Background //@ts-expect-error
           variant="dots"
           gap={20}
           size={2}

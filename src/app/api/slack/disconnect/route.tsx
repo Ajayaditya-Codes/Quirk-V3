@@ -61,7 +61,6 @@ export const POST = async (): Promise<NextResponse> => {
     const data: SlackRevokeResponse = await response.json();
 
     if (!data.ok) {
-      console.error("Slack API response error:", data.error);
       return NextResponse.json(
         { error: `Slack API error: ${data.error || "Unknown error"}` },
         { status: 400 }
@@ -76,8 +75,6 @@ export const POST = async (): Promise<NextResponse> => {
 
     return NextResponse.json({ message: "Slack access revoked successfully." });
   } catch (error: unknown) {
-    console.error("Error revoking Slack access token:", error);
-
     if (error instanceof Error && error.message.includes("network")) {
       return NextResponse.json(
         {

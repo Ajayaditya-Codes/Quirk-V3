@@ -182,7 +182,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
     });
 
     return NextResponse.json({ message: "Workflow updated successfully" });
-  } catch (error) {
+  } catch {
     await db.insert(Logs).values({
       LogMessage: `Failed to update workflow ${workflowName}`,
       WorkflowName: workflowName,

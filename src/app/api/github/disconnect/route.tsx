@@ -36,8 +36,6 @@ export const POST = async (): Promise<NextResponse> => {
 
     return NextResponse.json({ message: "GitHub disconnected successfully." });
   } catch (error) {
-    console.error("Error disconnecting GitHub:", error);
-
     return NextResponse.json(
       {
         error:

@@ -51,7 +51,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
     });
 
     return NextResponse.json({ message: "Workflow deactivated successfully" });
-  } catch (error) {
+  } catch {
     await db.insert(Logs).values({
       LogMessage: `Failed to deactivate Workflow ${workflowName}`,
       WorkflowName: workflowName,

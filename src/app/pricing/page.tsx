@@ -54,7 +54,7 @@ export default function Pricing() {
                       <SignUp />
                     </div>
                     <h3 className="text-xl font-semibold mb-3">
-                      What's Included:
+                      What&apos;s Included:
                     </h3>
                     <ul className="gap-y-2 flex flex-col">
                       <li>Access to Core Workflow Builder</li>
@@ -94,7 +94,8 @@ export default function Pricing() {
                       Take your productivity to the next level with advanced
                       features and priority support. Designed for growing teams
                       and businesses needing robust tools and enhanced
-                      capabilities. Let's build your perfect solution together.
+                      capabilities. Let&apos;s build your perfect solution
+                      together.
                     </p>
                     <a
                       href={`mailto:${email}`}
@@ -103,7 +104,7 @@ export default function Pricing() {
                       Contact Dev Team
                     </a>
                     <h3 className="text-xl font-semibold mb-3">
-                      What's Included:
+                      What&apos;s Included:
                     </h3>
                     <ul className="gap-y-2 flex flex-col">
                       <li>Everything in the Basic Plan</li>

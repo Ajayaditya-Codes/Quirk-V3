@@ -5,7 +5,6 @@ import {
   Position,
   type Node,
   type NodeProps,
-  type Edge,
 } from "@xyflow/react";
 import { IconBrandOpenai } from "@tabler/icons-react";
 import {

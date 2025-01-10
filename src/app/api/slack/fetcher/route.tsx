@@ -49,8 +49,7 @@ export const GET = async (): Promise<NextResponse> => {
     }
 
     return NextResponse.json({ channels: data.channels });
-  } catch (error) {
-    console.error("Error processing request:", error);
+  } catch {
     return NextResponse.json(
       { error: "An unexpected error occurred" },
       { status: 500 }

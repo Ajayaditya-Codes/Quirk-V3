@@ -88,7 +88,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       WorkflowName: workflowName,
       Success: true,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to add workflow" },
       { status: 500 }

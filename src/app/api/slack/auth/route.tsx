@@ -44,7 +44,6 @@ export const GET = async (req: NextRequest) => {
     const data = await response.json();
 
     if (!data.ok) {
-      console.error("Slack OAuth Error:", data.error);
       return NextResponse.json(
         { error: `Slack OAuth Error: ${data.error}` },
         { status: 400 }
@@ -55,7 +54,6 @@ export const GET = async (req: NextRequest) => {
 
     return NextResponse.redirect("https://quirk-v2.vercel.app/connections");
   } catch (error) {
-    console.error("Error fetching Slack access token:", error);
     return NextResponse.json(
       { error: "Failed to fetch access token from Slack" },
       { status: 500 }
@@ -79,8 +77,7 @@ const updateSlackAccessToken = async (slackAccessToken: string) => {
       .set({ SlackAccessToken: slackAccessToken })
       .where(eq(Users.KindeID, userId))
       .execute();
-  } catch (error) {
-    console.error("Error updating Slack access token:", error);
+  } catch {
     throw new Error("Failed to update Slack access token in the database");
   }
 };

@@ -38,8 +38,7 @@ const fetchUserDetails = async (): Promise<UserDetails | null> => {
       given_name: given_name ?? "Guest",
       credits: userDetails?.Credits ?? 0,
     };
-  } catch (error) {
-    console.error("Failed to fetch user details:", error);
+  } catch {
     return null;
   }
 };

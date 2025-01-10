@@ -57,8 +57,8 @@ const DuplicateBtn: FC<DuplicateBtnProps> = ({ workflowName }): JSX.Element => {
     try {
       await promise;
       router.refresh();
-    } catch (error) {
-      console.error("Error during workflow duplication:", error);
+    } catch {
+      return;
     }
   };
 

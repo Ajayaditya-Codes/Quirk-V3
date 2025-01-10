@@ -72,7 +72,6 @@ export const GET = async (req: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.redirect("https://quirk-v2.vercel.app/connections");
   } catch (error) {
-    console.error("Error during GitHub authentication flow:", error);
     return NextResponse.json(
       {
         error: "Failed to complete GitHub authentication flow",

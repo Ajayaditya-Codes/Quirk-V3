@@ -70,14 +70,15 @@ export async function POST(req: NextRequest) {
         message: "Task created successfully",
         data: result?.data,
       });
-    } catch (error: any) {
+    } catch {
       return NextResponse.json(
-        { message: "Failed to create task", error: error?.response?.body },
+        {
+          message: "Failed to create task",
+        },
         { status: 500 }
       );
     }
-  } catch (error: any) {
-    console.error(error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to retrieve data" },
       { status: 500 }

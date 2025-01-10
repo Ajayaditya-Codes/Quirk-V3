@@ -16,7 +16,6 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import {
-  Edge,
   Handle,
   Position,
   type Node,

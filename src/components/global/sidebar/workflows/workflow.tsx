@@ -27,13 +27,12 @@ const get = async (): Promise<any | null> => {
       (await db.select().from(Users).where(eq(Users.KindeID, id)).execute());
     userDetails = result && result.length > 0 ? result[0] : null;
     return userDetails;
-  } catch (error: any) {
+  } catch (error) {
     toaster.create({
       title: "Error fetching user details",
-      description: error?.message || "Something went wrong.",
+      description: (error as Error)?.message || "Something went wrong.",
       type: "error",
     });
-    console.error("Error fetching user details:", error);
     return null;
   }
 };

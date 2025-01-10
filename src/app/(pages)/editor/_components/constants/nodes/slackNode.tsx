@@ -18,13 +18,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { IconBrandSlack, IconInfoCircle } from "@tabler/icons-react";
-import {
-  Handle,
-  Position,
-  type Edge,
-  type Node,
-  type NodeProps,
-} from "@xyflow/react";
+import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
 import { useFlowStore } from "../store/reactFlowStore";
 import { toaster } from "@/components/ui/toaster";
 import {

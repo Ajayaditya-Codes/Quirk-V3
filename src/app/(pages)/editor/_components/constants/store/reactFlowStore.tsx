@@ -1,4 +1,10 @@
-import { addEdge, DefaultEdgeOptions, Edge, Node } from "@xyflow/react";
+import {
+  addEdge,
+  Connection,
+  DefaultEdgeOptions,
+  Edge,
+  Node,
+} from "@xyflow/react";
 import { create } from "zustand";
 import GitHubNode from "../nodes/githubNode";
 import AsanaNode from "../nodes/asanaNode";
@@ -22,7 +28,7 @@ type FlowState = {
   addEdge: (edge: Edge) => void;
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
-  addNewEdge: (connection: any) => void;
+  addNewEdge: (connection: Connection) => void;
   githubHandler: () => void;
   slackHandler: () => void;
   asanaHandler: () => void;
@@ -65,18 +71,19 @@ export const useFlowStore = create<FlowState>((set) => ({
       const { edges, nodes } = state;
       const targetNode = nodes.find((node) => node.id === connection.target);
       const sourceNode = nodes.find((node) => node.id === connection.source);
-      const isGitHubNode = (node: any) => node?.type === "github";
-      const isGPTNode = (node: any) => node?.type === "gpt";
-      const isConditionNode = (node: any) => node?.type === "condition";
+      const isGitHubNode = (node: Node) => node?.type === "github";
+      const isGPTNode = (node: Node) => node?.type === "gpt";
+      const isConditionNode = (node: Node) => node?.type === "condition";
 
       if (
-        (isConditionNode(targetNode) || isGPTNode(targetNode)) &&
-        isGPTNode(sourceNode)
+        (isConditionNode(targetNode as Node) ||
+          isGPTNode(targetNode as Node)) &&
+        isGPTNode(sourceNode as Node)
       ) {
         return { edges };
       }
 
-      if (isGitHubNode(sourceNode)) {
+      if (isGitHubNode(sourceNode as Node)) {
         return { edges: addEdge(connection, edges) };
       }
 

@@ -39,8 +39,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       message: "Message sent successfully",
       data,
     });
-  } catch (error) {
-    console.error("Error sending message to Slack:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to send message" },
       { status: 500 }

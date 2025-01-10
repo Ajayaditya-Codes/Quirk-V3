@@ -143,7 +143,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       if (skip) continue;
 
       if (childNode.id.startsWith("gpt")) {
-        let trace = edges.filter((edg) => edg.source === childNode.id)[0];
+        const trace = edges.filter((edg) => edg.source === childNode.id)[0];
         childNode = nodes.filter((node) => node.id === trace.target)[0];
       }
 
@@ -164,7 +164,6 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       }
     }
   } catch (error) {
-    console.error(error);
     return NextResponse.json(
       { message: "There was some error" },
       { status: 500 }
@@ -200,14 +199,17 @@ const SlackHandler = async (
       ? await geminiHandler(payload)
       : preprocessMessage(data?.message as string, payload);
   try {
-    const response = await fetch("https://quirk-v2.vercel.app/api/slack/messenger", {
-      method: "POST",
-      body: JSON.stringify({
-        channel: data?.channel,
-        text: text,
-        token: SlackAccessToken,
-      }),
-    });
+    const response = await fetch(
+      "https://quirk-v2.vercel.app/api/slack/messenger",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          channel: data?.channel,
+          text: text,
+          token: SlackAccessToken,
+        }),
+      }
+    );
     const result = await response.json();
 
     if (response.ok) {
@@ -228,10 +230,8 @@ const SlackHandler = async (
           WorkflowName: WorkflowName,
         })
         .execute();
-      console.error("Error:", result.error);
     }
   } catch (error) {
-    console.error("Request failed:", error);
     await db
       .insert(Logs)
       .values({
@@ -305,10 +305,8 @@ const AsanaHandler = async (
           WorkflowName: WorkflowName,
         })
         .execute();
-      console.error("Error:", result.error);
     }
   } catch (error) {
-    console.error("Request failed:", error);
     await db
       .insert(Logs)
       .values({
@@ -390,8 +388,7 @@ function checker(
         return false;
     }
     return false;
-  } catch (error) {
-    console.error(error);
+  } catch {
     return false;
   }
 }
@@ -409,7 +406,7 @@ async function geminiHandler(payload: any): Promise<string> {
 
     const result = await model.generateContent(prompt);
     return result.response.text();
-  } catch (err) {
+  } catch {
     return "Error in Gemini Handler";
   }
 }

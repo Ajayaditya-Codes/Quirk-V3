@@ -1,8 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+
+type Workspace = {
+  gid: string;
+  name: string;
+};
 
 const validateEnvVariables = (...vars: string[]): void => {
   vars.forEach((variable) => {
@@ -12,10 +17,7 @@ const validateEnvVariables = (...vars: string[]): void => {
   });
 };
 
-const fetchFromAsana = async (
-  url: string,
-  accessToken: string
-): Promise<any> => {
+const fetchFromAsana = async (url: string, accessToken: string) => {
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -37,7 +39,7 @@ const fetchUserFromDatabase = async (userId: string) => {
     .execute();
 };
 
-export const GET = async (req: NextRequest): Promise<NextResponse> => {
+export const GET = async (): Promise<NextResponse> => {
   try {
     const { getUser } = getKindeServerSession();
     const userSession = await getUser();
@@ -111,7 +113,7 @@ export const GET = async (req: NextRequest): Promise<NextResponse> => {
     const workspaces = userData.data.workspaces;
 
     const workspaceProjects = await Promise.all(
-      workspaces.map(async (workspace: any) => {
+      workspaces.map(async (workspace: Workspace) => {
         const projectsUrl = `https://app.asana.com/api/1.0/workspaces/${workspace.gid}/projects`;
         const projectsData = await fetchFromAsana(projectsUrl, accessToken);
 
@@ -130,8 +132,6 @@ export const GET = async (req: NextRequest): Promise<NextResponse> => {
       data: workspaceProjects,
     });
   } catch (error) {
-    console.error("Error fetching data:", error);
-
     return NextResponse.json(
       {
         error: "An unexpected error occurred while fetching Asana data.",

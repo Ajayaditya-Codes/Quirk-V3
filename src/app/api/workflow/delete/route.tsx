@@ -73,9 +73,7 @@ export const DELETE = async (req: NextRequest): Promise<NextResponse> => {
       .execute();
 
     await db.delete(Logs).where(eq(Logs.WorkflowName, workflowName)).execute();
-  } catch (error) {
-    console.error("Failed to delete workflow:", error);
-
+  } catch {
     return NextResponse.json(
       { error: "Failed to delete workflow" },
       { status: 500 }

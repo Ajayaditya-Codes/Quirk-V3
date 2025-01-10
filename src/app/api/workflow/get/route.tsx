@@ -56,8 +56,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     return NextResponse.json(workflowData[0], { status: 200 });
-  } catch (error) {
-    console.error("Error fetching workflow data:", error);
+  } catch {
     return NextResponse.json(
       {
         error:

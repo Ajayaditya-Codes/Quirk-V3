@@ -60,7 +60,6 @@ export async function DELETE(req: Request): Promise<NextResponse> {
       message: "Webhook deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting webhook:", error);
     return NextResponse.json({
       message: "Webhook delete request completed (silent error ignored)",
     });

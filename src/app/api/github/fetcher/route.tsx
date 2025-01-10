@@ -40,8 +40,7 @@ export const GET = async (): Promise<NextResponse> => {
     const repos = await octokit.request("GET /user/repos", {});
 
     return NextResponse.json(repos.data);
-  } catch (error) {
-    console.error("Error fetching repositories:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch GitHub repositories" },
       { status: 500 }

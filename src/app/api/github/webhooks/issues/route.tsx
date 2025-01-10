@@ -68,9 +68,9 @@ export async function POST(req: Request): Promise<NextResponse> {
       data: response.data,
       hook_id: response.data.id,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
-      { message: "Error creating webhook", error: error.message },
+      { message: "Error creating webhook", error: (error as Error)?.message },
       { status: 500 }
     );
   }

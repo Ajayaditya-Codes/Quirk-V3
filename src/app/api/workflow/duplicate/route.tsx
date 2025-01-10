@@ -93,8 +93,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Failed to duplicate workflow:", error);
+  } catch {
     return NextResponse.json(
       { error: `Failed to duplicate workflow "${workflow}"` },
       { status: 500 }

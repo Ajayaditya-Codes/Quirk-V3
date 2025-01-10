@@ -75,13 +75,12 @@ const fetchLogs = async (): Promise<Log[] | null> => {
     }
 
     return logs;
-  } catch (error: any) {
+  } catch (error) {
     toaster.create({
       title: "Error fetching logs",
-      description: error?.message || "Something went wrong.",
+      description: (error as Error)?.message || "Something went wrong.",
       type: "error",
     });
-    console.error("Error fetching logs:", error);
     return null;
   }
 };

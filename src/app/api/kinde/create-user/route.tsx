@@ -40,11 +40,11 @@ export const POST = async (req: Request) => {
               Credits: 20,
             })
             .execute();
-        } catch (error: any) {
+        } catch (error) {
           return NextResponse.json(
             {
               message: "Failed to insert user into the database",
-              error: error.message,
+              error: (error as Error)?.message,
             },
             { status: 500 }
           );

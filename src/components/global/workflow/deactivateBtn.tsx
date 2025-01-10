@@ -55,8 +55,8 @@ const DeactivateBtn: FC<DeactivateBtnProps> = ({
     try {
       await promise;
       router.refresh();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      return;
     }
   };
 

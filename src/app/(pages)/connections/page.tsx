@@ -80,13 +80,12 @@ const fetchUserDetails = async (): Promise<User | null> => {
       .execute();
 
     return result?.length ? (result[0] as User) : null;
-  } catch (error: any) {
+  } catch (error) {
     toaster.create({
       title: "Error fetching user details",
-      description: error?.message || "Something went wrong.",
+      description: (error as Error)?.message || "Something went wrong.",
       type: "error",
     });
-    console.error("Error fetching user details:", error);
     return null;
   }
 };
