@@ -230,7 +230,7 @@ const SlackHandler = async (
         })
         .execute();
     }
-  } catch (error) {
+  } catch {
     await db
       .insert(Logs)
       .values({
@@ -306,7 +306,9 @@ const AsanaHandler = async (
     }
   } catch {
     await db
-      .insert(Logs)
+      .insert(Logs)    Docs
+
+New Project
       .values({
         LogMessage: "There was Some Error in Asana Task Creation",
         Success: false,

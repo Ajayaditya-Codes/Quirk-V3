@@ -152,7 +152,7 @@ const Editor = (): ReactElement => {
     fetchRepos();
     fetchChannels();
     fetchProjects();
-  }, [slug]);
+  }, [slug, setNodes, setEdges]);
 
   return (
     <div className="h-[92vh] w-full">
