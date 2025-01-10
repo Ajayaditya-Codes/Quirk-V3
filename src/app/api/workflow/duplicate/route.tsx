@@ -6,7 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const { getUser } = getKindeServerSession();
-  const { id } = await getUser();
+  const kindeUser = await getUser();
+  const id = kindeUser?.id;
 
   if (!id) {
     return NextResponse.json(

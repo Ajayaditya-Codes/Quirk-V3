@@ -46,7 +46,9 @@ const IconExclamationCircle = dynamic(() =>
 
 const fetchLogs = async (): Promise<Log[] | null> => {
   const { getUser } = getKindeServerSession();
-  const { id } = await getUser();
+  const kindeUser = await getUser();
+  const id = kindeUser?.id;
+
   if (!id) return null;
 
   try {

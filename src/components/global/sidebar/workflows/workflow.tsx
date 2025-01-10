@@ -19,7 +19,9 @@ import { toaster } from "@/components/ui/toaster";
 
 const get = async (): Promise<any | null> => {
   const { getUser } = getKindeServerSession();
-  const { id } = await getUser();
+  const kindeUser = await getUser();
+  const id = kindeUser?.id;
+
   let userDetails = null;
   try {
     const result =
