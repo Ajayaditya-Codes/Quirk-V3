@@ -53,7 +53,7 @@ export const GET = async (req: NextRequest) => {
     await updateSlackAccessToken(data.authed_user.access_token);
 
     return NextResponse.redirect("https://quirk-v2.vercel.app/connections");
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch access token from Slack" },
       { status: 500 }

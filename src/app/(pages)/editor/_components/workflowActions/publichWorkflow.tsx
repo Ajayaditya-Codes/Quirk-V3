@@ -45,7 +45,7 @@ const PublishWorkflow: React.FC = () => {
         }
 
         resolve("Workflow Published Successfully");
-      } catch (error) {
+      } catch {
         reject(new Error("Failed to Publish the Workflow"));
       }
     });

@@ -163,7 +163,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
         );
       }
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: "There was some error" },
       { status: 500 }
@@ -210,7 +210,6 @@ const SlackHandler = async (
         }),
       }
     );
-    const result = await response.json();
 
     if (response.ok) {
       await db
@@ -285,7 +284,6 @@ const AsanaHandler = async (
         }),
       }
     );
-    const result = await response.json();
 
     if (response.ok) {
       await db
@@ -306,7 +304,7 @@ const AsanaHandler = async (
         })
         .execute();
     }
-  } catch (error) {
+  } catch {
     await db
       .insert(Logs)
       .values({
