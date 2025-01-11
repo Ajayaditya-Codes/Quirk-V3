@@ -50,13 +50,11 @@ export default async function Workflow(): Promise<JSX.Element> {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Workflows</SidebarGroupLabel>
-
-      <SidebarGroupAction className="p-2">
-        <CreateBtn />
-      </SidebarGroupAction>
-
-      <SidebarGroupContent className="space-y-1 py-2">
+      <SidebarGroupContent className="space-y-1">
+        <div className="flex flex-row justify-between items-center my-2">
+          <p className="text-sm font-semibold">Workflows</p>
+          <CreateBtn />
+        </div>
         {Workflows.length === 0 ? (
           <div className="flex w-full justify-center mb-5 text-sm text-center">
             No Workflows Found.
