@@ -64,7 +64,7 @@ const CreateBtn: FC = (): JSX.Element => {
   return (
     <span
       onClick={handler}
-      className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+      className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
       aria-label="Create Workflow"
       role="button"
     >

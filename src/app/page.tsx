@@ -1,3 +1,5 @@
+"use client";
+
 import HeroSection from "@/components/global/landing/heroSection";
 import HeaderNav from "@/components/global/landing/headerNav";
 import FeaturesSection from "@/components/global/landing/featuresSection";

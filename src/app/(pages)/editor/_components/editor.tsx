@@ -167,7 +167,6 @@ const Editor = (): ReactElement => {
         zoomOnPinch
         snapToGrid
         colorMode={theme as ColorMode}
-        minZoom={1.5}
         fitView
       >
         <Background //@ts-expect-error
