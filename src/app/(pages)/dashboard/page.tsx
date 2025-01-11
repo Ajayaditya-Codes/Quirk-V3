@@ -95,14 +95,6 @@ const Greet: React.FC = async () => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
 
-  const getGreeting = (): string => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return "Good Morning";
-    if (hour >= 12 && hour < 18) return "Good Afternoon";
-    if (hour >= 18 && hour < 22) return "Good Evening";
-    return "Hope you're having a great night";
-  };
-
   return (
     <div className="flex flex-row space-x-3 mb-5">
       <Image
@@ -115,7 +107,7 @@ const Greet: React.FC = async () => {
       <div>
         <h3 className="font-medium">Quirk V2</h3>
         <h3 className="text-xl mb-5 font-semibold">
-          {getGreeting()}, {userSession?.given_name || "User"}!
+          Welcome Back, {userSession?.given_name || "User"}!
         </h3>
       </div>
     </div>
