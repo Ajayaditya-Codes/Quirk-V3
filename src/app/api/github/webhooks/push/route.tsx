@@ -54,7 +54,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       active: true,
       events: ["push"],
       config: {
-        url: "https://patient-husky-uniquely.ngrok-free.app/api/github/handler",
+        url: "https://quirk-v2.vercel.app//api/github/handler",
         content_type: "json",
         insecure_ssl: "0",
       },
