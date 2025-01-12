@@ -105,12 +105,7 @@ const Greet: React.FC = async () => {
       <div>
         <h3 className="font-medium">Quirk V2</h3>
         <h3 className="text-xl mb-5 font-semibold">
-          Welcome Back,{" "}
-          {userDetails?.Username
-            ? userDetails.Username[0].toUpperCase() +
-              userDetails.Username.slice(1)
-            : "Guest"}
-          !
+          Welcome Back, {userDetails?.Username}!
         </h3>
       </div>
     </div>

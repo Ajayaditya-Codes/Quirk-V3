@@ -13,7 +13,6 @@ const UserRound = lazy(() =>
 
 interface UserDetails {
   id: string;
-  picture?: string | null;
   given_name?: string | null;
   credits?: number;
 }
@@ -21,7 +20,7 @@ interface UserDetails {
 const fetchUserDetails = async (): Promise<UserDetails | null> => {
   try {
     const { getUser } = getKindeServerSession();
-    const { id, picture } = await getUser();
+    const { id } = await getUser();
 
     if (!id) return null;
 
@@ -34,10 +33,7 @@ const fetchUserDetails = async (): Promise<UserDetails | null> => {
 
     return {
       id,
-      picture,
-      given_name: userDetails?.Username
-        ? userDetails.Username[0].toUpperCase() + userDetails.Username.slice(1)
-        : "Guest",
+      given_name: userDetails?.Username || "Guest",
       credits: userDetails?.Credits ?? 0,
     };
   } catch {
@@ -51,17 +47,7 @@ const Footer: React.FC = async (): Promise<JSX.Element> => {
   return (
     <Suspense fallback={<FooterSkeleton />}>
       <SidebarFooter className="m-3 p-3 shadow-lg bg-white dark:bg-neutral-800 rounded-xl flex flex-row items-start">
-        {userDetails?.picture ? (
-          <Image
-            alt={`${userDetails.given_name}'s profile picture`}
-            src={userDetails.picture}
-            width={30}
-            height={30}
-            className="pt-1 rounded-lg"
-          />
-        ) : (
-          <UserRound />
-        )}
+        <UserRound className="pt-1 rounded-lg" />
         <div className="ml-2 flex flex-col items-start">
           <h3 className="text-lg font-semibold tracking-tighter leading-snug">
             {userDetails?.given_name || "Guest"}
