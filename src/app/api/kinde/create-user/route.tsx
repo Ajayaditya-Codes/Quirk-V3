@@ -31,9 +31,9 @@ export const POST = async (req: Request) => {
 
       if (
         user?.id &&
-        (user?.username ||
-          user?.user_name ||
-          user?.first_name + user?.last_name) &&
+        // (user?.username ||
+        //   user?.user_name ||
+        //   user?.first_name + user?.last_name) &&
         user?.email
       ) {
         try {
@@ -41,10 +41,7 @@ export const POST = async (req: Request) => {
             .insert(Users)
             .values({
               KindeID: user.id,
-              Username:
-                user?.username ||
-                user?.user_name ||
-                user?.first_name + user?.last_name,
+              Username: JSON.stringify(user),
               Email: user.email,
               Credits: 20,
             })
