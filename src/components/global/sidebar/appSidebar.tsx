@@ -48,13 +48,14 @@ const AppSidebar: FC = (): JSX.Element => {
                     icon={<BadgeDollarSign size={20} />}
                     item="Pricing"
                   />
+
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild className="text-base">
+                    <SidebarMenuButton asChild>
                       <LogoutLink>
                         <span className="w-6" aria-hidden="true">
                           <LogOut size={20} />
                         </span>
-                        <span>Logout</span>
+                        <span className="ml-2">Logout</span>
                       </LogoutLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

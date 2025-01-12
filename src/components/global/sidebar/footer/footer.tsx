@@ -35,7 +35,9 @@ const fetchUserDetails = async (): Promise<UserDetails | null> => {
     return {
       id,
       picture,
-      given_name: given_name ?? "Guest",
+      given_name: userDetails?.Username
+        ? userDetails.Username[0].toUpperCase() + userDetails.Username.slice(1)
+        : "Guest",
       credits: userDetails?.Credits ?? 0,
     };
   } catch {

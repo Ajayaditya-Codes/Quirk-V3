@@ -35,12 +35,12 @@ const WorkflowCard = dynamic(() => import("@/components/global/workflowCard"), {
 type User = {
   KindeID: string;
   Workflows: string[];
+  Username: string;
 };
 
 const fetchUserDetails = async (): Promise<User | null> => {
   const { getUser } = getKindeServerSession();
   const userSession = await getUser();
-
   if (!userSession?.id) return null;
 
   try {
@@ -49,7 +49,6 @@ const fetchUserDetails = async (): Promise<User | null> => {
       .from(Users)
       .where(eq(Users.KindeID, userSession.id))
       .execute();
-
     return result?.length ? (result[0] as User) : null;
   } catch (error) {
     toaster.create({
@@ -92,8 +91,7 @@ const fetchLogs = async (): Promise<Log[] | null> => {
 };
 
 const Greet: React.FC = async () => {
-  const { getUser } = getKindeServerSession();
-  const userSession = await getUser();
+  const userDetails = await fetchUserDetails();
 
   return (
     <div className="flex flex-row space-x-3 mb-5">
@@ -107,7 +105,12 @@ const Greet: React.FC = async () => {
       <div>
         <h3 className="font-medium">Quirk V2</h3>
         <h3 className="text-xl mb-5 font-semibold">
-          Welcome Back, {userSession?.given_name || "User"}!
+          Welcome Back,{" "}
+          {userDetails?.Username
+            ? userDetails.Username[0].toUpperCase() +
+              userDetails.Username.slice(1)
+            : "Guest"}
+          !
         </h3>
       </div>
     </div>

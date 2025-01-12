@@ -45,24 +45,24 @@ export default async function Workflow(): Promise<JSX.Element> {
 
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="space-y-1">
-        <div className="flex flex-row justify-between items-center my-2">
+      <SidebarGroupContent>
+        <div className="flex flex-row justify-between items-center mt-2">
           <p className="text-sm font-semibold">Workflows</p>
           <CreateBtn />
         </div>
         {Workflows.length === 0 ? (
-          <div className="flex w-full justify-center mb-5 text-sm text-center">
+          <div className="flex w-full justify-center my-5 text-sm text-center">
             No Workflows Found.
           </div>
         ) : (
-          <div className="flex flex-col w-full mb-5">
+          <div className="flex flex-col w-full my-3">
             {Workflows.map((workflow: string) => (
               <WorkflowMenu workflow={workflow} key={workflow} />
             ))}
           </div>
         )}
 
-        <div className="flex items-start space-x-2 rounded-xl bg-white p-3 shadow-lg dark:bg-neutral-800 mt-3">
+        <div className="flex items-start space-x-2 rounded-xl bg-white p-3 shadow-lg dark:bg-neutral-800">
           <Box />
           <div>
             <p>

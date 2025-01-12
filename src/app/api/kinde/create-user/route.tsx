@@ -29,19 +29,16 @@ export const POST = async (req: Request) => {
     if ((event as jwt.JwtPayload)?.type === "user.created") {
       const user = (event as jwt.JwtPayload)?.data?.user;
 
-      if (
-        user?.id &&
-        // (user?.username ||
-        //   user?.user_name ||
-        //   user?.first_name + user?.last_name) &&
-        user?.email
-      ) {
+      if (user?.id && user?.email) {
         try {
           await db
             .insert(Users)
             .values({
               KindeID: user.id,
-              Username: JSON.stringify(user),
+              Username:
+                user?.first_name + user?.lastname ||
+                user?.username ||
+                user.email.split("@")[0],
               Email: user.email,
               Credits: 20,
             })

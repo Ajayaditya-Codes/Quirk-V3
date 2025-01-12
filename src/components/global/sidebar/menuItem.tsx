@@ -1,4 +1,10 @@
-import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+"use client";
+
+import {
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import Link from "next/link";
 import React, { FC, ReactNode } from "react";
 
@@ -8,11 +14,12 @@ interface MenuItemProps {
 }
 
 const MenuItem: FC<MenuItemProps> = ({ item, icon }) => {
+  const { setOpenMobile } = useSidebar();
   const itemPath = `/${item.toLowerCase()}`;
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild>
+      <SidebarMenuButton asChild onClick={() => setOpenMobile(false)}>
         <Link
           href={itemPath}
           prefetch={true}
