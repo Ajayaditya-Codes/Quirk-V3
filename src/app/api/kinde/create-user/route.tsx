@@ -36,7 +36,9 @@ export const POST = async (req: Request) => {
             .values({
               KindeID: user.id,
               Username:
-                (user?.first_name as string) + (user?.last_name as string),
+                (user?.first_name as string) +
+                " " +
+                (user?.last_name as string),
               Email: user.email,
               Credits: 20,
             })

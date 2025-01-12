@@ -46,18 +46,15 @@ const Footer: React.FC = async (): Promise<JSX.Element> => {
 
   return (
     <Suspense fallback={<FooterSkeleton />}>
-      <SidebarFooter className="m-3 p-3 shadow-lg bg-white dark:bg-neutral-800 rounded-xl flex flex-row items-start">
-        <UserRound className="pt-1 rounded-lg" />
-        <div className="ml-2 flex flex-col items-start">
-          <h3 className="text-lg font-semibold tracking-tighter leading-snug">
-            {userDetails?.given_name || "Guest"}
-          </h3>
-          <small className="font-medium leading-snug">
-            {userDetails
-              ? `You are using the Free Plan of Quirk. You have ${userDetails.credits} free credits remaining.`
-              : "Unable to load user information. Please try again later."}
-          </small>
-        </div>
+      <SidebarFooter className="m-3 p-3 shadow-lg bg-white dark:bg-neutral-800 rounded-xl flex flex-col items-start justify-start space-y-1">
+        <h3 className="text-lg font-semibold tracking-tighter leading-snug">
+          {userDetails?.given_name || "Guest"}
+        </h3>
+        <small className="font-medium leading-snug">
+          {userDetails
+            ? `You are using the Free Plan of Quirk. You have ${userDetails.credits} free credits remaining.`
+            : "Unable to load user information. Please try again later."}
+        </small>
       </SidebarFooter>
     </Suspense>
   );
