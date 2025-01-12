@@ -21,7 +21,7 @@ interface UserDetails {
 const fetchUserDetails = async (): Promise<UserDetails | null> => {
   try {
     const { getUser } = getKindeServerSession();
-    const { id, picture, given_name } = await getUser();
+    const { id, picture } = await getUser();
 
     if (!id) return null;
 
