@@ -62,7 +62,7 @@ export default async function Workflow(): Promise<JSX.Element> {
           </div>
         )}
 
-        <div className="flex items-start space-x-2 rounded-xl bg-white p-3 shadow-lg dark:bg-neutral-800">
+        <div className="flex items-start space-x-2 rounded-xl bg-white p-3 shadow-lg dark:bg-neutral-800 mt-3">
           <Box />
           <div>
             <p>
